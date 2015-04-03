@@ -52,6 +52,22 @@ function float GetHorPlusFOV(float BaseFOV, float BaseAspectRatio)
 	return hFOV(vFOV(BaseFOV, BaseAspectRatio), DesiredRatioX / DesiredRatioY);
 }
 
+//fox: In-game set functions
+exec function SetFOV(float FOV)
+{
+	Desired43FOV = FOV;
+	SaveConfig();
+}
+exec function SetRatio(string Ratio)
+{
+	local array<string> R;
+
+	Split(Ratio, "x", R);
+	DesiredRatioX = float(R[0]);
+	DesiredRatioY = float(R[1]);
+	SaveConfig();
+}
+
 defaultproperties
 {
 	bShouldSave=true
