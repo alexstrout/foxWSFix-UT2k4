@@ -1,8 +1,8 @@
-foxWSFix v1.0
+foxWSFix v1.1
 Hor+ FOV widescreen support for Unreal Tournament 2004
 By fox
 
-Thanks to Steam user Anonanon for suggesting this, as well as Azareal for creating the HUD Scaling Fix mutator: https://forums.epicgames.com/threads/971852-HUD-Scaling-Fix-%28RC3%29
+Thanks to Steam user Anonanon for suggesting this, as well as Azarael for creating the HUD Scaling Fix mutator: https://forums.epicgames.com/threads/971852-HUD-Scaling-Fix-%28RC3%29
 
 ==========
  Features
@@ -51,7 +51,7 @@ Unfortunately, Aspect Ratio can not be reliably determined automatically with fo
 Should be compatible with all mods, provided they don't use a custom PlayerInput class (they probably won't).
 
 Does not fix HUD stretching, as that would have required more aggressive changes that were a little beyond the scope of this project.
-However, Azareal over at the Epic Games Forum has a "HUD Scaling Fix" mutator here: https://forums.epicgames.com/threads/971852-HUD-Scaling-Fix-%28RC3%29
+However, Azarael over at the Epic Games Forum has a "HUD Scaling Fix" mutator here: https://forums.epicgames.com/threads/971852-HUD-Scaling-Fix-%28RC3%29
 
 foxWSFix stores its settings in User.ini as such:
 
@@ -63,7 +63,7 @@ foxWSFix stores its settings in User.ini as such:
 ============
  Known Bugs
 ============
-None currently! :)
+Some weapons do not scale correctly in widescreen, such as the Sniper Rifle. This is due to a strange bug with weapon model rotation (for example, the Sniper Rifle is actually rotated 90* before being rendered). I suspect the transformations for position and FOV are being done in the wrong order when drawing the weapon to the HUD canvas. Sorry, I'm not currently sure how to fix this!
 
 ========================
  Feedback / Source Code
@@ -84,5 +84,8 @@ And of course, thanks for trying the mod!
 =========
  Changes
 =========
+v1.1 (WIP):
+-- Optimizations to avoid recalculating view FOV and weapon FOV every frame (oops!)
+
 v1.0 (04/03/15):
 -- Initial release.

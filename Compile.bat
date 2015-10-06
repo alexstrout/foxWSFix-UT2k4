@@ -1,3 +1,6 @@
+@Echo off
 del ..\System\foxWSFix.*
+echo Starting Compile Job...
 ..\System\UCC make
-pause >nul
+echo.
+pause
