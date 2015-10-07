@@ -30,9 +30,13 @@ event PlayerInput(float DeltaTime)
 		SaveConfig();
 	}
 
-	//Set our FOV if we're not zooming
-	if (!bZooming && FOVAngle == DefaultFOV)
-		FOV(CachedFOV);
+	//Set our FOV if we're not zooming - like FixFOV function but using CachedFOV instead of explicit defaults
+	//Note: Older version just called FOV but that actually calls SaveConfig every run! Oops
+	if (!bZooming && FOVAngle == DefaultFOV) {
+		FOVAngle = CachedFOV;
+		DesiredFOV = CachedFOV;
+		DefaultFOV = CachedFOV;
+	}
 
 	//Set weapon FOV as well - only need to do once per weapon switch
 	//Note: CachedWeapon defaults to None, but still need a None check in case some mod or whatever sets Weapon to None (who knows)
