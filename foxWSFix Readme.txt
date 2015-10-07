@@ -71,10 +71,10 @@ Some weapons do not scale correctly in widescreen, such as the Sniper Rifle. Thi
 This is a tiny project I started on April 03, 2015, completed within a few hours based on knowledge from working on foxMod for UT3.
 
 If you have any questions or feedback, I'd love to hear them! Feel free to leave a comment on:
-Steam   http://steamcommunity.com/id/foxBoxInc/
+Steam   https://steamcommunity.com/app/13230/discussions/0/611702631218438023/
 ModDB   http://www.moddb.com/members/foxunit01/
 
-Source code for the project is included in the "Src" folder so you can laugh at my silly code.
+Source code for the project is included in the "Src" folder so you can laugh at my silly code. Also available at: https://bitbucket.org/alexstrout/foxwsfix-ut2k4
 If you would like to build the mod source code, there are convenient batch files provided in the Src folder.
 Feel free to use any portion of the project so long as it is properly attributed.
 
@@ -84,8 +84,9 @@ And of course, thanks for trying the mod!
 =========
  Changes
 =========
-v1.1 (WIP):
+v1.1 (10/07/15):
 -- Optimizations to avoid recalculating view FOV and weapon FOV every frame (oops!)
+-- Don't use FOV function as that calls SaveConfig every run, leading to performance issues (oops!)
 
 v1.0 (04/03/15):
 -- Initial release.
