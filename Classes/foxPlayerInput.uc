@@ -11,7 +11,7 @@ class foxPlayerInput extends PlayerInput within PlayerController
 
 var bool bShouldSave;
 var float CachedFOV;
-var Weapon CachedWeapon;
+var float CachedWeaponFOV;
 
 var globalconfig float Desired43FOV;
 var globalconfig float DesiredRatioX;
@@ -39,10 +39,10 @@ event PlayerInput(float DeltaTime)
 	}
 
 	//Set weapon FOV as well - only need to do once per weapon switch
-	//Note: CachedWeapon defaults to None, but still need a None check in case some mod or whatever sets Weapon to None (who knows)
-	if (Pawn != None && Pawn.Weapon != None && Pawn.Weapon != CachedWeapon) {
-		CachedWeapon = Pawn.Weapon;
-		CachedWeapon.DisplayFOV = GetHorPlusFOV(CachedWeapon.default.DisplayFOV, 4 / 3.f);
+	//Note: We can't cache / compare the weapon due to memory fault, but we can cache / compare the FOV
+	if (Pawn != None && Pawn.Weapon != None && Pawn.Weapon.DisplayFOV != CachedWeaponFOV) {
+		CachedWeaponFOV = GetHorPlusFOV(Pawn.Weapon.default.DisplayFOV, 4 / 3.f);
+		Pawn.Weapon.DisplayFOV = CachedWeaponFOV;
 	}
 }
 
@@ -86,7 +86,7 @@ defaultproperties
 {
 	bShouldSave=true
 	CachedFOV=90.0
-	CachedWeapon=None
+	CachedWeaponFOV=0.0
 	Desired43FOV=90.0
 	DesiredRatioX=4.0
 	DesiredRatioY=3.0
