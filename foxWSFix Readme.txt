@@ -1,4 +1,4 @@
-foxWSFix v1.1
+foxWSFix v1.11
 Hor+ FOV widescreen support for Unreal Tournament 2004
 By fox
 
@@ -84,6 +84,9 @@ And of course, thanks for trying the mod!
 =========
  Changes
 =========
+v1.11 (10/07/15):
+-- Fixed optimization-related general protection fault
+
 v1.1 (10/07/15):
 -- Optimizations to avoid recalculating view FOV and weapon FOV every frame (oops!)
 -- Don't use FOV function as that calls SaveConfig every run, leading to performance issues (oops!)
