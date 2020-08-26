@@ -11,7 +11,9 @@ class foxPlayerInput extends PlayerInput within PlayerController
 
 var bool bShouldSave;
 var float CachedFOV;
-var Vector CachedPlayerViewOffset;
+var byte CachedInventoryGroup;
+var byte CachedGroupOffset;
+var bool CachedSmallWeapons;
 
 var globalconfig float Desired43FOV;
 var globalconfig float DesiredRatioX;
@@ -42,49 +44,67 @@ event PlayerInput(float DeltaTime)
 	//Set weapon FOV as well - only need to do once per weapon switch
 	//Note: We can't cache / compare the weapon due to memory fault, but we can cache / compare the FOV
 	if (Pawn != None && Pawn.Weapon != None
-	&& Pawn.Weapon.SmallViewOffset != CachedPlayerViewOffset) {
-		Pawn.Weapon.DisplayFOV = GetHorPlusFOV(Pawn.Weapon.default.DisplayFOV, 4 / 3.f);
+	&& (
+		Pawn.Weapon.InventoryGroup != CachedInventoryGroup
+		|| Pawn.Weapon.GroupOffset != CachedGroupOffset
+		|| Outer.bSmallWeapons != CachedSmallWeapons
+	))
+		ApplyWeaponFOV(Pawn.Weapon);
+}
 
-		//Fix bad DisplayFOV calculation in Pawn.CalcDrawOffset()
-		//PlayerViewOffset is unfortunately set every Weapon.RenderOverlays() call - so hijack SmallViewOffset
-		if (Outer.bSmallWeapons) {
-			Pawn.Weapon.SmallEffectOffset = Pawn.Weapon.default.SmallEffectOffset;
-			CachedPlayerViewOffset = Pawn.Weapon.default.SmallViewOffset;
-		}
-		else {
-			Pawn.Weapon.SmallEffectOffset = Pawn.Weapon.default.EffectOffset;
-			CachedPlayerViewOffset = Pawn.Weapon.default.PlayerViewOffset;
-		}
-		CachedPlayerViewOffset *= Pawn.Weapon.DisplayFOV / Pawn.Weapon.default.DisplayFOV;
-		Pawn.Weapon.SmallViewOffset = CachedPlayerViewOffset;
-		class'PlayerController'.default.bSmallWeapons = true;
+function ApplyWeaponFOV(Weapon Weap)
+{
+	//First set the new FOV...
+	Weap.DisplayFOV = GetHorPlusFOV(Weap.default.DisplayFOV, 4 / 3.f);
+
+	//And remember our selected weapon
+	CachedInventoryGroup = Weap.InventoryGroup;
+	CachedGroupOffset = Weap.GroupOffset;
+
+	//Fix bad DisplayFOV calculation in Pawn.CalcDrawOffset()
+	//PlayerViewOffset is unfortunately set every Weapon.RenderOverlays() call - so hijack SmallViewOffset!
+	CachedSmallWeapons = Outer.bSmallWeapons;
+	if (CachedSmallWeapons) {
+		if (Weap.default.SmallEffectOffset != vect(0,0,0))
+			Weap.SmallEffectOffset = Weap.default.SmallEffectOffset;
+		else
+			Weap.SmallEffectOffset = Weap.default.EffectOffset
+				+ Weap.default.PlayerViewOffset - Weap.default.SmallViewOffset;
+		if (Weap.default.SmallViewOffset != vect(0,0,0))
+			Weap.SmallViewOffset = Weap.default.SmallViewOffset;
+		else
+			Weap.SmallViewOffset = Weap.default.PlayerViewOffset;
 	}
+	else {
+		Weap.SmallEffectOffset = Weap.default.EffectOffset;
+		Weap.SmallViewOffset = Weap.default.PlayerViewOffset;
+	}
+	Weap.SmallViewOffset *= Weap.DisplayFOV / Weap.default.DisplayFOV;
+	class'PlayerController'.default.bSmallWeapons = true;
 }
 
 function HandleWideHUD()
 {
 	local string WideHUDType;
 	local class<HUD> HudClass;
-	local class<Scoreboard> ScoreboardClass;
 
-	switch (Level.Game.HUDType) {
-		case "XInterface.HudCDeathMatch": WideHUDType = "HUDFix.HudWDeathMatch"; break;
-		case "XInterface.HudCTeamDeathMatch": WideHUDType = "HUDFix.HudWTeamDeathMatch"; break;
-		case "XInterface.HudCCaptureTheFlag": WideHUDType = "HUDFix.HudWCaptureTheFlag"; break;
-		case "Onslaught.ONSHUDOnslaught": Level.Game.HUDType = "HUDFix.ONSHUDWOnslaught"; break;
-		case "SkaarjPack.HudInvasion": WideHUDType = "HUDFix.HudWInvasion"; break;
-		case "UT2k4Assault.HUD_Assault": Level.Game.HUDType = "HUDFix.HUDWAssault"; break;
-		case "BonusPack.HudLMS": WideHUDType = "HUDFix.HudWLMS"; break;
-		case "XInterface.HudCDoubleDomination": WideHUDType = "HUDFix.HudWDoubleDomination"; break;
-		case "XInterface.HudCBombingRun": WideHUDType = "HUDFix.HudWBombingRun"; break;
-		case "BonusPack.HudMutant": WideHUDType = "HUDFix.HudWMutant"; break;
-		//case "Jailbreak.JBInterfaceHUD": WideHUDType = "HUDFix.JBWInterfaceHUD"; break;
+	log("foxPlayerInput" @ GetURLMap() @ Outer.myHUD.Class @ Outer.myHUD.ScoreBoard.Class);
+	switch (Outer.myHUD.Class) {
+		case class'HudCDeathMatch': WideHUDType = "HUDFix.HudWDeathMatch"; break;
+		case class'HudCTeamDeathMatch': WideHUDType = "HUDFix.HudWTeamDeathMatch"; break;
+		case class'HudCCaptureTheFlag': WideHUDType = "HUDFix.HudWCaptureTheFlag"; break;
+		case class'ONSHUDOnslaught': WideHUDType = "HUDFix.ONSHUDWOnslaught"; break;
+		case class'HudInvasion': WideHUDType = "HUDFix.HudWInvasion"; break;
+		case class'HUD_Assault': WideHUDType = "HUDFix.HUDWAssault"; break;
+		case class'HudLMS': WideHUDType = "HUDFix.HudWLMS"; break;
+		case class'HudCDoubleDomination': WideHUDType = "HUDFix.HudWDoubleDomination"; break;
+		case class'HudCBombingRun': WideHUDType = "HUDFix.HudWBombingRun"; break;
+		case class'HudMutant': WideHUDType = "HUDFix.HudWMutant"; break;
 	}
 	if (WideHUDType != "") {
 		HudClass = class<HUD>(DynamicLoadObject(WideHUDType, class'Class'));
-		ScoreboardClass = class<Scoreboard>(DynamicLoadObject(Level.Game.ScoreBoardType, class'Class'));
-		if (HudClass != None && ScoreboardClass != None)
-			Outer.ClientSetHUD(HudClass, ScoreboardClass);
+		if (HudClass != None)
+			Outer.ClientSetHUD(HudClass, Outer.myHUD.ScoreBoard.Class);
 	}
 }
 
