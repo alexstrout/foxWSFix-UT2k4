@@ -9,53 +9,99 @@ class foxPlayerInput extends PlayerInput within PlayerController
 	config(User)
 	transient;
 
-var bool bShouldSave;
-var float CachedFOV;
+var bool bDoInit;
+
+var float CachedResScaleX;
+var float CachedDefaultFOV;
+var float CachedDesiredFOV;
+
+var float CachedASTurretMinPlayerFOV;
+
 var byte CachedInventoryGroup;
 var byte CachedGroupOffset;
-var bool CachedSmallWeapons;
 
 var globalconfig float Desired43FOV;
-var globalconfig float DesiredRatioX;
-var globalconfig float DesiredRatioY;
+
+const DEGTORAD = 0.01745329251994329576923690768489;
+const RADTODEG = 57.295779513082320876798154814105;
+
+//fox: Set "desired" 4:3 FOV via console command (and menu if foxUT2K4Tab_PlayerSettings GUI override is active)
+exec function SetFOV(float F)
+{
+	Desired43FOV = F;
+	SaveConfig();
+
+	//This will force a new weapon position / FOV calculation
+	CachedResScaleX = default.CachedResScaleX;
+
+	//... And this will correct our next FOV
+	DesiredFOV = F;
+}
 
 //fox: Hijack this to force FOV per current aspect ratio - done every frame as a lazy catch-all since we're only hooking clientside PlayerInput
 event PlayerInput(float DeltaTime)
 {
 	Super.PlayerInput(DeltaTime);
 
-	//Possibly SaveConfig to create new entries in User.ini - only do this once to save cycles
-	//This will also set our CachedFOV so we don't recalculate it every frame
-	if (bShouldSave) {
-		bShouldSave = false;
-		CachedFOV = GetHorPlusFOV(Desired43FOV, 4 / 3.f);
+	//Do initialization stuff here, since we don't have init events
+	if (bDoInit) {
+		bDoInit = false;
+
+		//Write settings to ini if first run
 		SaveConfig();
-		HandleWideHUD();
+
+		//Attempt to load widescreen HUDs (if not already done)
+		LoadWideHUD();
+		return;
 	}
 
-	//Set our FOV if we're not zooming - like FixFOV function but using CachedFOV instead of explicit defaults
-	//Note: Older version just called FOV but that actually calls SaveConfig every run! Oops
-	if (!bZooming && FOVAngle == DefaultFOV) {
-		FOVAngle = CachedFOV;
-		DesiredFOV = CachedFOV;
-		DefaultFOV = CachedFOV;
+	//Detect screen aspect ratio changes and queue FOV / WeaponFOV updates
+	if (myHUD.ResScaleX != CachedResScaleX) {
+		CachedResScaleX = myHUD.ResScaleX;
+		CachedDefaultFOV = default.CachedDefaultFOV;
+		CachedDesiredFOV = default.CachedDesiredFOV;
+		CachedInventoryGroup = default.CachedInventoryGroup;
+		CachedGroupOffset = default.CachedGroupOffset;
+		return;
+	}
+
+	//Attempt to set an accurate FOV for our aspect ratio
+	if (DefaultFOV != CachedDefaultFOV) {
+		CachedDefaultFOV = GetHorPlusFOV(Desired43FOV);
+		DefaultFOV = CachedDefaultFOV;
+		return;
+	}
+
+	//Actually set this FOV, including when we're zoomed
+	if (DesiredFOV != DefaultFOV
+	&& DesiredFOV != CachedDesiredFOV) {
+		//Special exception for ASTurrets, due to how they handle zooming
+		if (ASTurret(Pawn) != None) {
+			FixASTurretFOV(ASTurret(Pawn));
+			return;
+		}
+		CachedDesiredFOV = GetHorPlusFOV(DesiredFOV);
+		DesiredFOV = CachedDesiredFOV;
+		return;
 	}
 
 	//Set weapon FOV as well - only need to do once per weapon switch
 	//Note: We can't cache / compare the weapon due to memory fault, but we can cache / compare the FOV
 	if (Pawn != None && Pawn.Weapon != None
-	&& (
-		Pawn.Weapon.InventoryGroup != CachedInventoryGroup
-		|| Pawn.Weapon.GroupOffset != CachedGroupOffset
-		|| Outer.bSmallWeapons != CachedSmallWeapons
-	))
+	&& (Pawn.Weapon.InventoryGroup != CachedInventoryGroup || Pawn.Weapon.GroupOffset != CachedGroupOffset))
 		ApplyWeaponFOV(Pawn.Weapon);
 }
-
+function FixASTurretFOV(ASTurret V)
+{
+	if (V.MinPlayerFOV != CachedASTurretMinPlayerFOV) {
+		CachedASTurretMinPlayerFOV = GetHorPlusFOV(V.default.MinPlayerFOV);
+		V.MinPlayerFOV = CachedASTurretMinPlayerFOV;
+	}
+}
 function ApplyWeaponFOV(Weapon Weap)
 {
 	//First set the new FOV...
-	Weap.DisplayFOV = GetHorPlusFOV(Weap.default.DisplayFOV, 4 / 3.f);
+	Weap.DisplayFOV = GetHorPlusFOV(Weap.default.DisplayFOV);
 
 	//And remember our selected weapon
 	CachedInventoryGroup = Weap.InventoryGroup;
@@ -63,8 +109,7 @@ function ApplyWeaponFOV(Weapon Weap)
 
 	//Fix bad DisplayFOV calculation in Pawn.CalcDrawOffset()
 	//PlayerViewOffset is unfortunately set every Weapon.RenderOverlays() call - so hijack SmallViewOffset!
-	CachedSmallWeapons = Outer.bSmallWeapons;
-	if (CachedSmallWeapons) {
+	if (bSmallWeapons) {
 		if (Weap.default.SmallEffectOffset != vect(0,0,0))
 			Weap.SmallEffectOffset = Weap.default.SmallEffectOffset;
 		else
@@ -80,16 +125,16 @@ function ApplyWeaponFOV(Weapon Weap)
 		Weap.SmallViewOffset = Weap.default.PlayerViewOffset;
 	}
 	Weap.SmallViewOffset *= Weap.DisplayFOV / Weap.default.DisplayFOV;
-	class'PlayerController'.default.bSmallWeapons = true;
+	class'PlayerController'.default.bSmallWeapons = true; //Must set specifically this for Weapon.RenderOverlays()
 }
 
-function HandleWideHUD()
+//fox: Attempt to dynamically load widescreen HUD
+function LoadWideHUD()
 {
 	local string WideHUDType;
 	local class<HUD> HudClass;
 
-	log("foxPlayerInput" @ GetURLMap() @ Outer.myHUD.Class @ Outer.myHUD.ScoreBoard.Class);
-	switch (Outer.myHUD.Class) {
+	switch (myHUD.Class) {
 		case class'HudCDeathMatch': WideHUDType = "HUDFix.HudWDeathMatch"; break;
 		case class'HudCTeamDeathMatch': WideHUDType = "HUDFix.HudWTeamDeathMatch"; break;
 		case class'HudCCaptureTheFlag': WideHUDType = "HUDFix.HudWCaptureTheFlag"; break;
@@ -104,51 +149,74 @@ function HandleWideHUD()
 	if (WideHUDType != "") {
 		HudClass = class<HUD>(DynamicLoadObject(WideHUDType, class'Class'));
 		if (HudClass != None)
-			Outer.ClientSetHUD(HudClass, Outer.myHUD.ScoreBoard.Class);
+			ClientSetHUD(HudClass, myHUD.ScoreBoard.Class);
 	}
 }
 
 //fox: Convert vFOV to hFOV (and vice versa)
-function float hFOV(float FOV, float AspectRatio)
+function float hFOV(float BaseFOV, float AspectRatio)
 {
-	FOV = FOV * (Pi / 180.0);
-	return (180 / Pi) * (2 * ATan(Tan(FOV / 2) * AspectRatio, 1));
+	return 2 * ATan(Tan(BaseFOV / 2f) * AspectRatio, 1);
 }
-function float vFOV(float FOV, float AspectRatio)
+function float vFOV(float BaseFOV, float AspectRatio)
 {
-	FOV = FOV * (Pi / 180.0);
-	return (180 / Pi) * (2 * ATan(Tan(FOV / 2) * 1/AspectRatio, 1));
+	return 2 * ATan(Tan(BaseFOV / 2f) / AspectRatio, 1);
 }
 
-//fox: Use aspect ratio to auto-generate a Hor+ FOV
-function float GetHorPlusFOV(float BaseFOV, float BaseAspectRatio)
+//fox: Use screen aspect ratio to auto-generate a Hor+ FOV
+function float GetHorPlusFOV(float BaseFOV)
 {
-	if (DesiredRatioY == 0)
-		return BaseFOV;
-	return hFOV(vFOV(BaseFOV, BaseAspectRatio), DesiredRatioX / DesiredRatioY);
+	return RADTODEG * hFOV(vFOV(BaseFOV * DEGTORAD, 4/3f), (myHUD.ResScaleX * 4) / (myHUD.ResScaleY * 3));
 }
 
-//fox: In-game set functions
-exec function SetFOV(float FOV)
+//fox: Fix options menu not saving
+exec function foxPlayerInputApplyDoubleClickTime()
 {
-	Desired43FOV = FOV;
-	bShouldSave = true;
+	//Hack - DoubleClickTime setting doesn't apply mid-game, so fix it here
+	//Note that foxUT2K4Tab_IForceSettings GUI override must be active for this to fire
+	//So we'll include it in the other updates too just in-case
+	DoubleClickTime = class'PlayerInput'.default.DoubleClickTime;
 }
-exec function SetRatio(string Ratio)
+function UpdateSensitivity(float F)
 {
-	local array<string> R;
-
-	Split(Ratio, "x", R);
-	DesiredRatioX = float(R[0]);
-	DesiredRatioY = float(R[1]);
-	bShouldSave = true;
+	Super.UpdateSensitivity(F);
+	class'PlayerInput'.default.MouseSensitivity = MouseSensitivity;
+	class'PlayerInput'.static.StaticSaveConfig();
+	foxPlayerInputApplyDoubleClickTime();
+}
+function UpdateAccel(float F)
+{
+	Super.UpdateAccel(F);
+	class'PlayerInput'.default.MouseAccelThreshold = MouseAccelThreshold;
+	class'PlayerInput'.static.StaticSaveConfig();
+	foxPlayerInputApplyDoubleClickTime();
+}
+function UpdateSmoothing(int Mode)
+{
+	Super.UpdateSmoothing(Mode);
+	class'PlayerInput'.default.MouseSmoothingMode = MouseSmoothingMode;
+	class'PlayerInput'.static.StaticSaveConfig();
+	foxPlayerInputApplyDoubleClickTime();
+}
+exec function SetSmoothingStrength(float F)
+{
+	Super.SetSmoothingStrength(F);
+	class'PlayerInput'.default.MouseSmoothingStrength = MouseSmoothingStrength;
+	class'PlayerInput'.static.StaticSaveConfig();
+	foxPlayerInputApplyDoubleClickTime();
+}
+function InvertMouse(optional string Invert)
+{
+	Super.InvertMouse(Invert);
+	class'PlayerInput'.default.bInvertMouse = bInvertMouse;
+	class'PlayerInput'.static.StaticSaveConfig();
+	foxPlayerInputApplyDoubleClickTime();
 }
 
 defaultproperties
 {
-	bShouldSave=true
-	CachedFOV=90.0
-	Desired43FOV=90.0
-	DesiredRatioX=4.0
-	DesiredRatioY=3.0
+	bDoInit=true
+	Desired43FOV=90f
+	CachedInventoryGroup=255
+	CachedGroupOffset=255
 }
