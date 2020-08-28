@@ -22,8 +22,8 @@ var byte CachedGroupOffset;
 
 var globalconfig float Desired43FOV;
 
-const DEGTORAD = 0.01745329251994329576923690768489;
-const RADTODEG = 57.295779513082320876798154814105;
+const DEGTORAD = 0.01745329251994329576923690768489; //Pi / 180
+const RADTODEG = 57.295779513082320876798154814105; //180 / Pi
 
 //fox: Set "desired" 4:3 FOV via console command (and menu if foxUT2K4Tab_PlayerSettings GUI override is active)
 exec function SetFOV(float F)
@@ -83,6 +83,14 @@ event PlayerInput(float DeltaTime)
 		CachedDesiredFOV = GetHorPlusFOV(DesiredFOV);
 		DesiredFOV = CachedDesiredFOV;
 		return;
+	}
+
+	//Oh no! Work around weapon respawn bug where position isn't set correctly on respawn
+	if (Level.TimeSeconds - Pawn.SpawnTime < 0.5) {
+		CachedInventoryGroup = default.CachedInventoryGroup;
+		CachedGroupOffset = default.CachedGroupOffset;
+		//Bit of a hack, just allow Weapon to process every tick during respawn to minimize "pop"
+		//return;
 	}
 
 	//Set weapon FOV as well - only need to do once per weapon switch
