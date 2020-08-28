@@ -21,6 +21,14 @@ var byte CachedInventoryGroup;
 var byte CachedGroupOffset;
 
 var globalconfig float Desired43FOV;
+var globalconfig bool bCorrectMouseSensitivity;
+
+struct native WideHUDMapStruct
+{
+	var class HUDClass;
+	var string WideHUD;
+};
+var globalconfig array<WideHUDMapStruct> WideHUDMap;
 
 const DEGTORAD = 0.01745329251994329576923690768489; //Pi / 180
 const RADTODEG = 57.295779513082320876798154814105; //180 / Pi
@@ -62,6 +70,7 @@ event PlayerInput(float DeltaTime)
 		CachedDesiredFOV = default.CachedDesiredFOV;
 		CachedInventoryGroup = default.CachedInventoryGroup;
 		CachedGroupOffset = default.CachedGroupOffset;
+		CorrectMouseSensitivity();
 		return;
 	}
 
@@ -86,7 +95,7 @@ event PlayerInput(float DeltaTime)
 	}
 
 	//Oh no! Work around weapon respawn bug where position isn't set correctly on respawn
-	if (Level.TimeSeconds - Pawn.SpawnTime < 0.5) {
+	if (Pawn == None || Level.TimeSeconds - Pawn.SpawnTime < 0.5) {
 		CachedInventoryGroup = default.CachedInventoryGroup;
 		CachedGroupOffset = default.CachedGroupOffset;
 		//Bit of a hack, just allow Weapon to process every tick during respawn to minimize "pop"
@@ -141,23 +150,22 @@ function LoadWideHUD()
 {
 	local string WideHUDType;
 	local class<HUD> HudClass;
+	local int i;
 
-	switch (myHUD.Class) {
-		case class'HudCDeathMatch': WideHUDType = "HUDFix.HudWDeathMatch"; break;
-		case class'HudCTeamDeathMatch': WideHUDType = "HUDFix.HudWTeamDeathMatch"; break;
-		case class'HudCCaptureTheFlag': WideHUDType = "HUDFix.HudWCaptureTheFlag"; break;
-		case class'ONSHUDOnslaught': WideHUDType = "HUDFix.ONSHUDWOnslaught"; break;
-		case class'HudInvasion': WideHUDType = "HUDFix.HudWInvasion"; break;
-		case class'HUD_Assault': WideHUDType = "HUDFix.HUDWAssault"; break;
-		case class'HudLMS': WideHUDType = "HUDFix.HudWLMS"; break;
-		case class'HudCDoubleDomination': WideHUDType = "HUDFix.HudWDoubleDomination"; break;
-		case class'HudCBombingRun': WideHUDType = "HUDFix.HudWBombingRun"; break;
-		case class'HudMutant': WideHUDType = "HUDFix.HudWMutant"; break;
+	for (i = 0; i < WideHUDMap.Length; i++) {
+		if (myHUD.Class == WideHUDMap[i].HUDClass) {
+			WideHUDType = WideHUDMap[i].WideHUD;
+			break;
+		}
 	}
 	if (WideHUDType != "") {
 		HudClass = class<HUD>(DynamicLoadObject(WideHUDType, class'Class'));
-		if (HudClass != None)
+		if (HudClass != None) {
+			Log("foxWSFix: foxPlayerInput replaced " $ myHUD.Class $ " with " $ HudClass);
 			ClientSetHUD(HudClass, myHUD.ScoreBoard.Class);
+			return;
+		}
+		Log("foxWSFix: foxPlayerInput no replacement specified for " $ myHUD.Class);
 	}
 }
 
@@ -177,6 +185,15 @@ function float GetHorPlusFOV(float BaseFOV)
 	return RADTODEG * hFOV(vFOV(BaseFOV * DEGTORAD, 4/3f), (myHUD.ResScaleX * 4) / (myHUD.ResScaleY * 3));
 }
 
+//fox: Match mouse sensitivity to 90 FOV sensitivity, allowing it to be independent of our aspect ratio
+function CorrectMouseSensitivity()
+{
+	if (!bCorrectMouseSensitivity)
+		return;
+	MouseSensitivity = class'PlayerInput'.default.MouseSensitivity
+		/ (GetHorPlusFOV(Desired43FOV) * 0.01111); //"Undo" PlayerInput FOVScale
+}
+
 //fox: Fix options menu not saving
 exec function foxPlayerInputApplyDoubleClickTime()
 {
@@ -191,6 +208,7 @@ function UpdateSensitivity(float F)
 	class'PlayerInput'.default.MouseSensitivity = MouseSensitivity;
 	class'PlayerInput'.static.StaticSaveConfig();
 	foxPlayerInputApplyDoubleClickTime();
+	CorrectMouseSensitivity();
 }
 function UpdateAccel(float F)
 {
@@ -224,7 +242,18 @@ function InvertMouse(optional string Invert)
 defaultproperties
 {
 	bDoInit=true
-	Desired43FOV=90f
 	CachedInventoryGroup=255
 	CachedGroupOffset=255
+	Desired43FOV=90f
+	bCorrectMouseSensitivity=true
+	WideHUDMap(0)=(HUDClass=class'HudCDeathMatch',WideHUD="HUDFix.HudWDeathMatch")
+	WideHUDMap(1)=(HUDClass=class'HudCTeamDeathMatch',WideHUD="HUDFix.HudWTeamDeathMatch")
+	WideHUDMap(2)=(HUDClass=class'HudCCaptureTheFlag',WideHUD="HUDFix.HudWCaptureTheFlag")
+	WideHUDMap(3)=(HUDClass=class'ONSHUDOnslaught',WideHUD="HUDFix.ONSHUDWOnslaught")
+	WideHUDMap(4)=(HUDClass=class'HudInvasion',WideHUD="HUDFix.HudWInvasion")
+	WideHUDMap(5)=(HUDClass=class'HUD_Assault',WideHUD="HUDFix.HUDWAssault")
+	WideHUDMap(6)=(HUDClass=class'HudLMS',WideHUD="HUDFix.HudWLMS")
+	WideHUDMap(7)=(HUDClass=class'HudCDoubleDomination',WideHUD="HUDFix.HudWDoubleDomination")
+	WideHUDMap(8)=(HUDClass=class'HudCBombingRun',WideHUD="HUDFix.HudWBombingRun")
+	WideHUDMap(9)=(HUDClass=class'HudMutant',WideHUD="HUDFix.HudWMutant")
 }
