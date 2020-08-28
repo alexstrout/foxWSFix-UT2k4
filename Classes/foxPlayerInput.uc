@@ -76,7 +76,7 @@ event PlayerInput(float DeltaTime)
 
 	//Attempt to set an accurate FOV for our aspect ratio
 	if (DefaultFOV != CachedDefaultFOV) {
-		CachedDefaultFOV = GetHorPlusFOV(Desired43FOV);
+		CachedDefaultFOV = GetHorPlusFOVClamped(Desired43FOV);
 		DefaultFOV = CachedDefaultFOV;
 		return;
 	}
@@ -184,6 +184,10 @@ function float GetHorPlusFOV(float BaseFOV)
 {
 	return RADTODEG * hFOV(vFOV(BaseFOV * DEGTORAD, 4/3f), (myHUD.ResScaleX * 4) / (myHUD.ResScaleY * 3));
 }
+function float GetHorPlusFOVClamped(float BaseFOV)
+{
+	return FClamp(GetHorPlusFOV(BaseFOV), 1, 170);
+}
 
 //fox: Match mouse sensitivity to 90 FOV sensitivity, allowing it to be independent of our aspect ratio
 function CorrectMouseSensitivity()
@@ -191,7 +195,7 @@ function CorrectMouseSensitivity()
 	if (!bCorrectMouseSensitivity)
 		return;
 	MouseSensitivity = class'PlayerInput'.default.MouseSensitivity
-		/ (GetHorPlusFOV(Desired43FOV) * 0.01111); //"Undo" PlayerInput FOVScale
+		/ (GetHorPlusFOVClamped(Desired43FOV) * 0.01111); //"Undo" PlayerInput FOVScale
 }
 
 //fox: Fix options menu not saving
