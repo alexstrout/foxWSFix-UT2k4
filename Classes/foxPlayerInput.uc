@@ -1,10 +1,4 @@
-//=============================================================================
-// foxPlayerInput ~fox
-// Lazily hijacks PlayerInput to provide mod-independent FOV scaling for both PlayerController and Weapon
-// Based off foxMod UT3 Code :)
-// Based off and may contain code provided by and Copyright 1998-2015 Epic Games, Inc. All Rights Reserved.
-//=============================================================================
-
+//Lazily hijacks PlayerInput to provide mod-independent FOV scaling for both PlayerController and Weapon
 class foxPlayerInput extends PlayerInput within PlayerController
 	config(User)
 	transient;

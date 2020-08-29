@@ -1,4 +1,10 @@
-//Just some common rendering code as includes
+/*
+	COPYRIGHT NOTICE
+	Below code is copyright Azarael - used with permission:
+	https://steamcommunity.com/app/13230/discussions/0/611702631218438023/#c611702631227999537
+*/
+
+//Common rendering code used in all widescreen HUDs
 //Courtesy of HUD Scaling Fix by Azarael, modified a bit for portability
 simulated final function DrawSpriteTileWidget(Canvas C, SpriteWidget W)
 {

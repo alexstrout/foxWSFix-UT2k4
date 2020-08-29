@@ -1,3 +1,18 @@
+/*
+	COPYRIGHT NOTICE
+	Below code is copyright Epic Games - all rights reserved
+	(Note: This package is not endorsed by Epic Games)
+
+	It is included for technical purposes only (e.g. to enable widescreen functionality)
+	There are a two specific function replacements made:
+		DrawSpriteWidget -> DrawSpriteTileWidget
+		DrawNumericWidget -> DrawNumericTileWidget
+	Additionally, Super function calls are replaced with the appropriate "Wide" call:
+		Super.AbcXYZ -> WideAbcXYZ
+	Finally, there may be smaller tweaks made based on Azarael's original HUDFix Mutator
+	These changes are marked with ~fox on a per-line basis detailing what changed
+*/
+
 #include Classes\Include\Team\_Internal\ShowTeamScorePassA.uci
 simulated function TeamOnslaughtWideShowTeamScorePassA(Canvas C)
 {

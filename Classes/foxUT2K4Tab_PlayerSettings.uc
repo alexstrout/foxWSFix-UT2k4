@@ -1,9 +1,3 @@
-//==============================================================================
-//	Description
-//
-//	Created by Ron Prestenback
-//	© 2003, Epic Games, Inc.  All Rights Reserved
-//==============================================================================
 class foxUT2K4Tab_PlayerSettings extends UT2K4Tab_PlayerSettings;
 
 //fox: Don't populate our widescreen-adjusted FOV in this menu (this will be corrected in-game after)
