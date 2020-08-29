@@ -1,5 +1,5 @@
-//#include Classes\Include\_Internal\ShowTeamScorePassA.uci
-function TeamWideShowTeamScorePassA(Canvas C)
+//#include Classes\Include\Team\_Internal\ShowTeamScorePassA.uci
+simulated function TeamWideShowTeamScorePassA(Canvas C)
 {
 	if ( bShowPoints )
 	{

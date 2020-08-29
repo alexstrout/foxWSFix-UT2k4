@@ -1,4 +1,5 @@
-function WideDrawTimer(Canvas C)
+//#include Classes\Include\_Internal\DrawTimer.uci
+simulated function WideDrawTimer(Canvas C)
 {
 	local GameReplicationInfo GRI;
 	local int Minutes, Hours, Seconds;

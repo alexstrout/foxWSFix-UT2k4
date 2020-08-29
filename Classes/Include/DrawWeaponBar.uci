@@ -1,5 +1,5 @@
 #include Classes\Include\_Internal\DrawWeaponBar.uci
-simulated function DrawWeaponBar( Canvas C )
+simulated function DrawWeaponBar(Canvas C)
 {
 	WideDrawWeaponBar(C);
 }

@@ -1,0 +1,5 @@
+#include Classes\Include\Team\Assault\_Internal\DrawTeamVS.uci
+simulated function DrawTeamVS(Canvas C)
+{
+	TeamAssaultWideDrawTeamVS(C);
+}

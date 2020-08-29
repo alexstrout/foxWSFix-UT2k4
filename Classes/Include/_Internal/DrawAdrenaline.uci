@@ -1,4 +1,5 @@
-function WideDrawAdrenaline( Canvas C )
+//#include Classes\Include\_Internal\DrawAdrenaline.uci
+simulated function WideDrawAdrenaline(Canvas C)
 {
 	if ( !PlayerOwner.bAdrenalineEnabled )
 		return;

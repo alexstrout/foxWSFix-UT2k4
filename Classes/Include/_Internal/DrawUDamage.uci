@@ -1,4 +1,5 @@
-function WideDrawUDamage( Canvas C )
+//#include Classes\Include\_Internal\DrawUDamage.uci
+simulated function WideDrawUDamage(Canvas C)
 {
 	local xPawn P;
 

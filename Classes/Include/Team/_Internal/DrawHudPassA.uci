@@ -1,5 +1,5 @@
 #include Classes\Include\_Internal\DrawHudPassA.uci
-function TeamWideDrawHudPassA (Canvas C)
+simulated function TeamWideDrawHudPassA(Canvas C)
 {
 	WideDrawHudPassA (C);
 	UpdateRankAndSpread(C);

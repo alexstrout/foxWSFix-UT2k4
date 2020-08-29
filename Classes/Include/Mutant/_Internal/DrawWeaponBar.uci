@@ -1,0 +1,22 @@
+#include Classes\Include\_Internal\DrawWeaponBar.uci
+simulated function MutantWideDrawWeaponBar(Canvas C)
+{
+	local color RealRedColor, RealBlueColor;
+
+	if ( !bMutantHUDColor )
+	{
+		WideDrawWeaponBar(C);
+		return;
+	}
+
+	RealRedColor = HudColorRed;
+	RealBlueColor = HudColorBlue;
+
+	HudColorRed = MutantHUDTint;
+	HudColorBlue = MutantHUDTint;
+
+	WideDrawWeaponBar(C);
+
+	HudColorRed = RealRedColor;
+	HudColorBlue = RealBlueColor;
+}

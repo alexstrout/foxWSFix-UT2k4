@@ -1,0 +1,29 @@
+#include Classes\Include\_Internal\UpdateRankAndSpread.uci
+simulated function LastManStandingWideUpdateRankAndSpread(Canvas C)
+{
+	local int i,cnt;
+
+
+	if ( (Scoreboard == None) || !Scoreboard.UpdateGRI() )
+		return;
+
+
+	 MyRank.Value = PlayerOwner.GameReplicationInfo.MaxLives-PawnOwnerPRI.Deaths;
+
+	cnt=0;
+	for( i=0 ; i<PlayerOwner.GameReplicationInfo.PRIArray.Length ; i++ )
+		if (!PlayerOwner.GameReplicationInfo.PRIArray[i].bOutOfLives)
+			cnt++;
+
+	MySpread.Value = cnt;
+
+	myScore.Value = Min (PawnOwnerPRI.Score, 999);	// max display space
+
+	if( bShowPoints )
+	{
+		DrawNumericTileWidget (C, myScore, DigitsBig);
+		if ( C.ClipX >= 640 )
+			DrawNumericTileWidget (C, mySpread, DigitsBig);
+		DrawNumericTileWidget (C, myRank, DigitsBig);
+	}
+}

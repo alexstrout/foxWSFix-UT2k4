@@ -1,4 +1,5 @@
-function WideDrawCrosshair (Canvas C)
+//#include Classes\Include\_Internal\DrawCrosshair.uci
+simulated function WideDrawCrosshair(Canvas C)
 {
 	local float NormalScale;
 	local int i, CurrentCrosshair;

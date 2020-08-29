@@ -1,4 +1,5 @@
-function WideDrawWeaponBar( Canvas C )
+//#include Classes\Include\_Internal\DrawWeaponBar.uci
+simulated function WideDrawWeaponBar(Canvas C)
 {
 	local int i, Count, Pos;
 	local float IconOffset;

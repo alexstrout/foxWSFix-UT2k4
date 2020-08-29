@@ -1,4 +1,5 @@
-function WideDrawHudPassA (Canvas C)
+//#include Classes\Include\_Internal\DrawHudPassA.uci
+simulated function WideDrawHudPassA(Canvas C)
 {
 	local Pawn RealPawnOwner;
 	local class<Ammunition> AmmoClass;

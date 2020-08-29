@@ -1,0 +1,130 @@
+#include Classes\Include\_Internal\DrawHudPassA.uci
+simulated function MutantWideDrawHudPassA(Canvas C)
+{
+	local rotator Dir;
+	local float Angle, VertDiff, Range, AngleDelta;
+	local MutantGameReplicationInfo mutantInfo;
+	local xMutantPawn x;
+
+	WideDrawHudPassA (C);
+
+	mutantInfo = MutantGameReplicationInfo(PlayerOwner.GameReplicationInfo);
+	x = xMutantPawn(PawnOwner);
+
+	// If there is a mutant, and we are not it - draw radar indicating mutant location.
+	if( bTestHud || (mutantInfo.MutantPRI != None && mutantInfo.MutantPRI != PlayerOwner.PlayerReplicationInfo) )
+	{
+		// Draw radar outline
+		if(bCenterRadar)
+		{
+			PassStyle=STY_None;
+			DrawSpriteTileWidget (C, CenterRadarBG);
+			PassStyle=STY_Alpha;
+		}
+		else
+		{
+			DrawSpriteTileWidget(C, TopRadarBG);
+		}
+
+		if(bTestHud)
+		{
+			Dir = rotator(vect(0, 0, 0) - PawnOwner.Location);
+			VertDiff = 0.0 - PawnOwner.Location.Z;
+			Range = VSize(vect(0, 0, 0) - PawnOwner.Location) - class'xPawn'.default.CollisionRadius;
+		}
+		else
+		{
+			Dir = rotator(mutantInfo.MutantLocation - PawnOwner.Location);
+			VertDiff = mutantInfo.MutantLocation.Z - PawnOwner.Location.Z;
+
+			// Remove player radiii from range (so when you are standing next to the mutant range is zero)
+			Range = VSize(mutantInfo.MutantLocation - PawnOwner.Location) - (2 * class'xPawn'.default.CollisionRadius);
+		}
+
+		Angle = ((Dir.Yaw - PawnOwner.Rotation.Yaw) & 65535) * 6.2832/65536;
+
+		if(VertDiff > LevelRampRegion)
+			C.DrawColor = AboveMutantColor;
+		else if(VertDiff > 0)
+			C.DrawColor = LerpColor(VertDiff/LevelRampRegion, LevelMutantColor, AboveMutantColor);
+		else if(VertDiff > -LevelRampRegion)
+			C.DrawColor = LerpColor(-VertDiff/LevelRampRegion, LevelMutantColor, BelowMutantColor);
+		else
+			C.DrawColor = BelowMutantColor;
+
+		C.Style = ERenderStyle.STY_Alpha;
+
+		if(bCenterRadar)
+		{
+			//C.SetPos(XCen * C.ClipX + HudScale * XRad * C.ClipX * sin(Angle) - 0.5*BigDotSize*C.ClipX, //Replaced w/ below line ~fox
+			C.SetPos(XCen * C.ClipX + HudScale*(ResScaleY/ResScaleX) * XRad * C.ClipX * sin(Angle) - 0.5*BigDotSize*C.ClipX, //Courtesy of HUD Scaling Fix by Azarael ~fox
+				YCen * C.ClipY - HudScale * YRad * C.ClipY * cos(Angle) - 0.5*BigDotSize*C.ClipX );
+		}
+		else
+		{
+			//C.SetPos(0.492 * C.ClipX + HudScale * 0.034 * C.ClipX * sin(Angle), //Replaced w/ below line ~fox
+			C.SetPos(0.492 * C.ClipX + HudScale*(ResScaleY/ResScaleX) * 0.034 * C.ClipX * sin(Angle), //Courtesy of HUD Scaling Fix by Azarael ~fox
+				0.042 * C.ClipY - HudScale * 0.045 * C.ClipY * cos(Angle));
+		}
+
+		C.DrawTile(Material'InterfaceContent.Hud.SkinA', BigDotSize*C.ClipX, BigDotSize*C.ClipX,838,238,144,144);
+
+		if(bCenterRadar)
+		{
+			//	Draw dots to indicate mutant range
+			AngleDelta = (FMin(RangeRampRegion, Range)/RangeRampRegion) * MaxAngleDelta;
+
+			C.DrawColor = RangeDotColor;
+
+			//C.SetPos(XCen * C.ClipX + HudScale * XRad * C.ClipX * sin(Angle + AngleDelta) - 0.5*SmallDotSize*C.ClipX, //Replaced w/ below line ~fox
+			C.SetPos(XCen * C.ClipX + HudScale*(ResScaleY/ResScaleX) * XRad * C.ClipX * sin(Angle + AngleDelta) - 0.5*SmallDotSize*C.ClipX, //Courtesy of HUD Scaling Fix by Azarael ~fox
+				YCen * C.ClipY - HudScale * YRad * C.ClipY * cos(Angle + AngleDelta) - 0.5*SmallDotSize*C.ClipX );
+
+			C.DrawTile(Material'InterfaceContent.Hud.SkinA', SmallDotSize*C.ClipX, SmallDotSize*C.ClipX, 838, 238, 144, 144);
+
+			//C.SetPos(XCen * C.ClipX + HudScale * XRad * C.ClipX * sin(Angle - AngleDelta) - 0.5*SmallDotSize*C.ClipX, //Replaced w/ below line ~fox
+			C.SetPos(XCen * C.ClipX + HudScale*(ResScaleY/ResScaleX) * XRad * C.ClipX * sin(Angle - AngleDelta) - 0.5*SmallDotSize*C.ClipX, //Courtesy of HUD Scaling Fix by Azarael ~fox
+				YCen * C.ClipY - HudScale * YRad * C.ClipY * cos(Angle - AngleDelta) - 0.5*SmallDotSize*C.ClipX);
+
+			C.DrawTile(Material'InterfaceContent.Hud.SkinA', SmallDotSize*C.ClipX, SmallDotSize*C.ClipX, 838, 238, 144, 144);
+		}
+		else
+		{
+			// Draw on Mutant range in middle of dial
+			C.DrawColor = MutantRangeColor;
+			C.Font = LoadMutantRangeFont();
+			C.DrawTextJustified( Min(int(Range),9999) , 1, 0.4 * C.ClipX, 0.03 * C.ClipY, 0.6 * C.ClipX, 0.08 * C.ClipY);
+		}
+
+		// Draw on Mutant name
+
+		C.DrawColor = WhiteColor;
+		C.SetPos(C.ClipX * MNOriginX, C.ClipY * MNOriginY);
+		C.DrawTileStretched(texture 'InterfaceContent.Menu.BorderBoxD', MNSizeX * C.ClipX, MNSizeY * C.ClipY);
+
+		C.DrawColor = CurrentMutantColor;
+		C.Font = LoadLevelActionFont();
+
+
+		if( bTestHud)
+			C.DrawTextJustified("DefLoc", 1, 0.3 * C.ClipX, 0.015 * C.ClipY, 0.7 * C.ClipX, 0.065 * C.ClipY);
+		else
+			C.DrawTextJustified(mutantInfo.MutantPRI.PlayerName, 1, 0.3 * C.ClipX, 0.015 * C.ClipY, 0.7 * C.ClipX, 0.065 * C.ClipY);
+	}
+
+	// If there is no bottom feeder - no more HUD to do.
+	if( mutantInfo.BottomFeederPRI == None)
+		return;
+
+	// If we are a bottom feeder - indicate on the screen
+	if( PRIIsBottomFeeder(PlayerOwner.PlayerReplicationInfo) )
+	{
+		C.DrawColor = WhiteColor;
+		C.SetPos(C.ClipX * BFIOriginX, C.ClipY * BFIOriginY);
+		C.DrawTileStretched(texture 'InterfaceContent.Menu.BorderBoxD', BFISizeX * C.ClipX, BFISizeY * C.ClipY);
+
+		C.DrawColor.R = 255 * (0.5 + 0.5 * Cos(Level.TimeSeconds * Pi * BFIPulseRate));
+		C.SetPos(C.ClipX * (BFIOriginX + BFIMargin), C.ClipY * (BFIOriginY + BFIMargin));
+		C.DrawTile( BottomFeederIcon, C.ClipX * (BFISizeX - 2*BFIMargin), C.ClipY * (BFISizeY - 2*BFIMargin), 0, 0, 256, 256);
+	}
+}

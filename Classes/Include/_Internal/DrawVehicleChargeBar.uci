@@ -1,4 +1,5 @@
-function WideDrawVehicleChargeBar(Canvas C)
+//#include Classes\Include\_Internal\DrawVehicleChargeBar.uci
+simulated function WideDrawVehicleChargeBar(Canvas C)
 {
 	local float ScaleFactor;
 

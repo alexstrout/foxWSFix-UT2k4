@@ -1,5 +1,5 @@
 #include Classes\Include\Team\_Internal\DrawHudPassA.uci
-function TeamAssaultWideDrawHudPassA (Canvas C)
+simulated function TeamAssaultWideDrawHudPassA(Canvas C)
 {
 	local bool	bOldShowWeaponInfo, bOldShowPersonalInfo;
 	local class<Ammunition> AmmoClass;

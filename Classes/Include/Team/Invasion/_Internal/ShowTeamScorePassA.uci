@@ -1,0 +1,32 @@
+#include Classes\Include\Team\_Internal\ShowTeamScorePassA.uci
+simulated function TeamInvasionWideShowTeamScorePassA(Canvas C)
+{
+	local float RadarWidth, PulseWidth, PulseBrightness;
+
+	RadarScale = Default.RadarScale * HUDScale;
+	RadarWidth = 0.5 * RadarScale * C.ClipX;
+	PulseWidth = RadarScale * C.ClipX;
+	C.DrawColor = RedColor;
+	C.Style = ERenderStyle.STY_Translucent;
+
+	PulseBrightness = FMax(0,(1 - 2*RadarPulse) * 255.0);
+	C.DrawColor.R = PulseBrightness;
+	C.SetPos(RadarPosX*C.ClipX - 0.5*PulseWidth,RadarPosY*C.ClipY+RadarWidth-0.5*PulseWidth);
+	C.DrawTile( Material'InterfaceContent.SkinA', PulseWidth, PulseWidth, 0, 880, 142, 142);
+
+	PulseWidth = RadarPulse * RadarScale * C.ClipX;
+	C.DrawColor = RedColor;
+	C.SetPos(RadarPosX*C.ClipX - 0.5*PulseWidth,RadarPosY*C.ClipY+RadarWidth-0.5*PulseWidth);
+	C.DrawTile( Material'InterfaceContent.SkinA', PulseWidth, PulseWidth, 0, 880, 142, 142);
+
+	C.Style = ERenderStyle.STY_Alpha;
+	C.DrawColor = GetTeamColor( PawnOwner.GetTeamNum() );
+	C.SetPos(RadarPosX*C.ClipX - RadarWidth,RadarPosY*C.ClipY+RadarWidth);
+	C.DrawTile( Material'AS_FX_TX.AssaultRadar', RadarWidth, RadarWidth, 0, 512, 512, -512);
+	C.SetPos(RadarPosX*C.ClipX,RadarPosY*C.ClipY+RadarWidth);
+	C.DrawTile( Material'AS_FX_TX.AssaultRadar', RadarWidth, RadarWidth, 512, 512, -512, -512);
+	C.SetPos(RadarPosX*C.ClipX - RadarWidth,RadarPosY*C.ClipY);
+	C.DrawTile( Material'AS_FX_TX.AssaultRadar', RadarWidth, RadarWidth, 0, 0, 512, 512);
+	C.SetPos(RadarPosX*C.ClipX,RadarPosY*C.ClipY);
+	C.DrawTile( Material'AS_FX_TX.AssaultRadar', RadarWidth, RadarWidth, 512, 0, -512, 512);
+}

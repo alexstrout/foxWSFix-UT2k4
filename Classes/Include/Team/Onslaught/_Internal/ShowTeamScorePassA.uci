@@ -1,0 +1,32 @@
+#include Classes\Include\Team\_Internal\ShowTeamScorePassA.uci
+simulated function TeamOnslaughtWideShowTeamScorePassA(Canvas C)
+{
+	local int x;
+
+	TeamWideShowTeamScorePassA(C);
+
+	if (bShowPoints)
+		for (x = 0; x < 2; x++)
+		{
+			DrawSpriteTileWidget (C, SymbolGB[x]);
+
+			if (FinalCore[x] != None && FinalCore[x].CoreStage == 0)
+			{
+				DrawSpriteTileWidget (C, CoreWidgets[x]);
+
+				if (FinalCore[x].bUnderAttack)
+				{
+					CoreHealthWidgets[x].Tints[TeamIndex].G = 255 * ColorPercent;
+					CoreHealthWidgets[x].Tints[TeamIndex].B = 255 * ColorPercent;
+				}
+				else
+					CoreHealthWidgets[x].Tints[TeamIndex] = WhiteColor;
+
+				CoreHealthWidgets[x].Value = round((float(FinalCore[x].Health) / FinalCore[x].DamageCapacity) * 100);
+				DrawNumericTileWidget(C, CoreHealthWidgets[x], DigitsBig);
+
+				//C.DrawColor = HudColorHighLight;
+				//Draw2DLocationDot(C, FinalCore[x].Location,0.5 + tmpPosX[x]*HUDScale, tmpPosY*HUDScale, tmpScaleX*HUDScale, tmpScaleY*HUDScale);
+			}
+		}
+}

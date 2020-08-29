@@ -1,5 +1,5 @@
 #include Classes\Include\Team\_Internal\DrawHudPassA.uci
-simulated function DrawHudPassA (Canvas C)
+simulated function DrawHudPassA(Canvas C)
 {
 	TeamWideDrawHudPassA(C);
 }

@@ -1,0 +1,53 @@
+#include Classes\Include\Team\_Internal\ShowTeamScorePassA.uci
+simulated function TeamDoubleDominationWideShowTeamScorePassA(Canvas C)
+{
+	local int i;
+
+
+	TeamWideShowTeamScorePassA(C);
+	SpaceOutTeamInfo();
+
+	if ( bShowPoints )
+	{
+		DrawSpriteTileWidget (C, SymbolGB[0]);
+		DrawSpriteTileWidget (C, SymbolGB[1]);
+
+		DrawSpriteTileWidget (C, DomPoints[0]);
+		DrawSpriteTileWidget (C, DomPoints[1]);
+
+		DomPoints[0].Tints[TeamIndex] = Points[0].Widgets[Points[0].PointState].Tints[TeamIndex];
+		DomPoints[1].Tints[TeamIndex] = Points[1].Widgets[Points[1].PointState].Tints[TeamIndex];
+
+		DomPoints[0].Tints[TeamIndex].A = 120;
+		DomPoints[1].Tints[TeamIndex].A = 120;
+
+		Points[0].Widgets[Points[0].PointState].PosY = 0.045*HUDScale;
+		Points[1].Widgets[Points[1].PointState].PosY = 0.045*HUDScale;
+
+		DrawSpriteTileWidget (C, Points[0].Widgets[Points[0].PointState]);
+		DrawSpriteTileWidget (C, Points[1].Widgets[Points[1].PointState]);
+
+		if ( DP1 != None )
+		{
+
+			C.DrawColor = HudColorHighLight;//Points[0].Widgets[Points[0].PointState].Tints[TeamIndex];
+			//Draw2DLocationDot(C, DP1.Location,0.5 - REDtmpPosX*HUDScale, REDtmpPosY*HUDScale, REDtmpScaleX*HUDScale, REDtmpScaleY*HUDScale); //Replaced w/ below line ~fox
+			Draw2DLocationDot(C, DP1.Location,0.5 - REDtmpPosX*HUDScale*(ResScaleY/ResScaleX), REDtmpPosY*HUDScale, REDtmpScaleX*HUDScale*(ResScaleY/ResScaleX), REDtmpScaleY*HUDScale); //Courtesy of HUD Scaling Fix by Azarael ~fox
+		}
+		if ( DP2 != None )
+		{
+			C.DrawColor = HudColorHighLight; //Points[1].Widgets[Points[1].PointState].Tints[TeamIndex];
+			//Draw2DLocationDot(C, DP2.Location,0.5 + BLUEtmpPosX*HUDScale, BLUEtmpPosY*HUDScale, BLUEtmpScaleX*HUDScale, BLUEtmpScaleY*HUDScale); //Replaced w/ below line ~fox
+			Draw2DLocationDot(C, DP2.Location,0.5 + BLUEtmpPosX*HUDScale*(ResScaleY/ResScaleX), BLUEtmpPosY*HUDScale, BLUEtmpScaleX*HUDScale*(ResScaleY/ResScaleX), BLUEtmpScaleY*HUDScale); //Courtesy of HUD Scaling Fix by Azarael ~fox
+		}
+
+
+		if ( PlayerOwner.GameReplicationInfo == None )
+			return;
+		for (i = 0; i < 2; i++)
+		{
+			if ( Points[i].PointState == PS_HeldEnemy )
+				DrawSpriteTileWidget (C, FlagHeldWidgets[i]);
+		}
+	}
+}

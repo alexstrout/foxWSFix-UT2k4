@@ -1,5 +1,5 @@
 #include Classes\Include\Team\_Internal\ShowTeamScorePassA.uci
-function TeamBombingRunWideShowTeamScorePassA(Canvas C)
+simulated function TeamBombingRunWideShowTeamScorePassA(Canvas C)
 {
 	local vector Pos;
 
@@ -34,5 +34,6 @@ function TeamBombingRunWideShowTeamScorePassA(Canvas C)
 		Pos = PlayerOwner.GameReplicationInfo.FlagPos;
 
 	C.DrawColor = HudColorHighLight;
-	Draw2DLocationDot(C, Pos, 0.5 - 0.0075*HUDScale, 0.03*HUDScale, 0.027*HUDScale, 0.035*HUDScale);
+	//Draw2DLocationDot(C, Pos, 0.5 - 0.0075*HUDScale, 0.03*HUDScale, 0.027*HUDScale, 0.035*HUDScale); //Replaced w/ below line ~fox
+	Draw2DLocationDot(C, Pos, 0.5 - 0.0075*HUDScale*(ResScaleY/ResScaleX), 0.03*HUDScale, 0.027*HUDScale*(ResScaleY/ResScaleX), 0.035*HUDScale); //Courtesy of HUD Scaling Fix by Azarael ~fox
 }

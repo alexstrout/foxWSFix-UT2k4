@@ -250,18 +250,14 @@ defaultproperties
 	CachedGroupOffset=255
 	Desired43FOV=90f
 	bCorrectMouseSensitivity=true
-	/* WideHUDMap(0)=(HUDClass=class'HudCDeathMatch',WideHUD="HUDFix.HudWDeathMatch")
-	WideHUDMap(1)=(HUDClass=class'HudCTeamDeathMatch',WideHUD="HUDFix.HudWTeamDeathMatch")
-	WideHUDMap(2)=(HUDClass=class'HudCCaptureTheFlag',WideHUD="HUDFix.HudWCaptureTheFlag")
-	WideHUDMap(3)=(HUDClass=class'ONSHUDOnslaught',WideHUD="HUDFix.ONSHUDWOnslaught")
-	WideHUDMap(4)=(HUDClass=class'HudInvasion',WideHUD="HUDFix.HudWInvasion")
-	WideHUDMap(5)=(HUDClass=class'HUD_Assault',WideHUD="HUDFix.HUDWAssault")
-	WideHUDMap(6)=(HUDClass=class'HudLMS',WideHUD="HUDFix.HudWLMS")
-	WideHUDMap(7)=(HUDClass=class'HudCDoubleDomination',WideHUD="HUDFix.HudWDoubleDomination")
-	WideHUDMap(8)=(HUDClass=class'HudCBombingRun',WideHUD="HUDFix.HudWBombingRun")
-	WideHUDMap(9)=(HUDClass=class'HudMutant',WideHUD="HUDFix.HudWMutant") */
 	WideHUDMap(0)=(HUDClass=class'HUD_Assault',WideHUD="foxWSFix.foxWideHUD_Assault")
 	WideHUDMap(1)=(HUDClass=class'HudCBombingRun',WideHUD="foxWSFix.foxWideHudCBombingRun")
-	WideHUDMap(2)=(HUDClass=class'HudCDeathMatch',WideHUD="foxWSFix.foxWideHudCDeathMatch")
-	WideHUDMap(3)=(HUDClass=class'HudCTeamDeathMatch',WideHUD="foxWSFix.foxWideHudCTeamDeathMatch")
+	WideHUDMap(2)=(HUDClass=class'HudCCaptureTheFlag',WideHUD="foxWSFix.foxWideHudCCaptureTheFlag")
+	WideHUDMap(3)=(HUDClass=class'HudCDeathMatch',WideHUD="foxWSFix.foxWideHudCDeathMatch")
+	WideHUDMap(4)=(HUDClass=class'HudCDoubleDomination',WideHUD="foxWSFix.foxWideHudCDoubleDomination")
+	WideHUDMap(5)=(HUDClass=class'HudCTeamDeathMatch',WideHUD="foxWSFix.foxWideHudCTeamDeathMatch")
+	WideHUDMap(6)=(HUDClass=class'HUDInvasion',WideHUD="foxWSFix.foxWideHUDInvasion")
+	WideHUDMap(7)=(HUDClass=class'HudLMS',WideHUD="foxWSFix.foxWideHudLMS")
+	WideHUDMap(8)=(HUDClass=class'HudMutant',WideHUD="foxWSFix.foxWideHudMutant")
+	WideHUDMap(9)=(HUDClass=class'ONSHUDOnslaught',WideHUD="foxWSFix.foxWideONSHUDOnslaught")
 }

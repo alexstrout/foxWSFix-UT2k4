@@ -1,0 +1,65 @@
+#include Classes\Include\Team\_Internal\ShowTeamScorePassA.uci
+simulated function TeamCaptureTheFlagWideShowTeamScorePassA(Canvas C)
+{
+	local CTFBase B;
+	local int i;
+
+	if ( bShowPoints )
+	{
+		DrawSpriteTileWidget (C, TeamScoreBackground[0]);
+		DrawSpriteTileWidget (C, TeamScoreBackground[1]);
+		DrawSpriteTileWidget (C, TeamScoreBackgroundDisc[0]);
+		DrawSpriteTileWidget (C, TeamScoreBackgroundDisc[1]);
+
+		TeamScoreBackground[0].Tints[TeamIndex] = HudColorBlack;
+		TeamScoreBackground[0].Tints[TeamIndex].A = 150;
+		TeamScoreBackground[1].Tints[TeamIndex] = HudColorBlack;
+		TeamScoreBackground[1].Tints[TeamIndex].A = 150;
+
+		DrawSpriteTileWidget (C, NewFlagWidgets[0]);
+		DrawSpriteTileWidget (C, NewFlagWidgets[1]);
+
+		NewFlagWidgets[0].Tints[0] = HudColorTeam[0];
+		NewFlagWidgets[0].Tints[1] = HudColorTeam[0];
+
+		NewFlagWidgets[1].Tints[0] = HudColorTeam[1];
+		NewFlagWidgets[1].Tints[1] = HudColorTeam[1];
+
+		DrawSpriteTileWidget (C, VersusSymbol );
+	 	DrawNumericTileWidget (C, ScoreTeam[0], DigitsBig);
+		DrawNumericTileWidget (C, ScoreTeam[1], DigitsBig);
+
+		if ( RedBase == None )
+		{
+			ForEach DynamicActors(Class'CTFBase', B)
+			{
+				if ( B.IsA('xRedFlagBase') )
+					RedBase = B;
+				else
+					BlueBase = B;
+			}
+		}
+		if ( RedBase != None )
+		{
+			C.DrawColor = HudColorRed;
+			//Draw2DLocationDot(C, RedBase.Location,0.5 - REDtmpPosX*HUDScale, REDtmpPosY*HUDScale, REDtmpScaleX*HUDScale, REDtmpScaleY*HUDScale); //Replaced w/ below line ~fox
+			Draw2DLocationDot(C, RedBase.Location,0.5 - REDtmpPosX*HUDScale*(ResScaleY/ResScaleX), REDtmpPosY*HUDScale, REDtmpScaleX*HUDScale*(ResScaleY/ResScaleX), REDtmpScaleY*HUDScale); //Courtesy of HUD Scaling Fix by Azarael ~fox
+		}
+		if ( BlueBase != None )
+		{
+			C.DrawColor = HudColorBlue;
+			//Draw2DLocationDot(C, BlueBase.Location,0.5 + BLUEtmpPosX*HUDScale, BLUEtmpPosY*HUDScale, BLUEtmpScaleX*HUDScale, BLUEtmpScaleY*HUDScale); //Replaced w/ below line ~fox
+			Draw2DLocationDot(C, BlueBase.Location,0.5 + BLUEtmpPosX*HUDScale*(ResScaleY/ResScaleX), BLUEtmpPosY*HUDScale, BLUEtmpScaleX*HUDScale*(ResScaleY/ResScaleX), BLUEtmpScaleY*HUDScale); //Courtesy of HUD Scaling Fix by Azarael ~fox
+		}
+
+		if ( PlayerOwner.GameReplicationInfo == None )
+			return;
+		for (i = 0; i < 2; i++)
+		{
+			if ( PlayerOwner.GameReplicationInfo.FlagState[i] == EFlagState.FLAG_HeldEnemy )
+			DrawSpriteTileWidget (C, FlagHeldWidgets[i]);
+			else if ( PlayerOwner.GameReplicationInfo.FlagState[i] == EFlagState.FLAG_Down )
+			DrawSpriteTileWidget (C, FlagDownWidgets[i]);
+		}
+	}
+}

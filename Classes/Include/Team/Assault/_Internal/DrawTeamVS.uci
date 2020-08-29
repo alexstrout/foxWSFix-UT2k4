@@ -1,0 +1,74 @@
+//#include Classes\Include\Team\Assault\_Internal\DrawTeamVS.uci
+simulated function TeamAssaultWideDrawTeamVS(Canvas C)
+{
+	local bool		bIsBehindOtherTeam;
+	local int		RelativeTime, hours, minutes, seconds, playerteam;;
+	local string	output;
+	local float		ScreenX, ScreenY, TotalScaleX, TotalScaleY, TextureDX, TextureDY, XL, YL, Progress;
+
+	// ref. previous team objective completed time
+	if ( CurrentObjective.ObjectiveDisabledTime > 0 )
+	{
+		RelativeTime		= CurrentObjective.ObjectiveDisabledTime - (ASGRI.RoundStartTime-ASGRI.RemainingTime);
+		bIsBehindOtherTeam	= RelativeTime < 0;
+		hours				= Abs(RelativeTime) / 3600;
+		minutes				= (Abs(RelativeTime) - hours*3600) / 60;
+		seconds				= Abs(RelativeTime) - hours*3600 - minutes*60;
+
+		if ( hours > 0 )
+			output = hours $ ":";
+
+		if ( minutes > 9 )
+			output = output $ minutes $ ":";
+		else
+			output = output $ "0" $ minutes $ ":";
+
+		if ( seconds > 9 )
+			output = output $ seconds;
+		else
+			output = output $ "0" $ seconds;
+	}
+	else // ref on progress on the same objective
+	{
+		Progress = CurrentObjective.SavedObjectiveProgress - CurrentObjective.GetObjectiveProgress();
+		bIsBehindOtherTeam	= Progress < 0;
+		output = int(Abs(Progress*100)) $ "%";
+	}
+
+	// match up widget position voodoo magic crap...
+	//TotalScaleX = HudCanvasScale * ResScaleX * HudScale; //Replaced w/ below line ~fox
+	TotalScaleX = HudCanvasScale * ResScaleY * HudScale; //Courtesy of HUD Scaling Fix by Azarael ~fox
+	TotalScaleY = HudCanvasScale * ResScaleY * HudScale;
+
+	TextureDX = Abs(VSBackgroundDisc.TextureCoords.X2 - VSBackgroundDisc.TextureCoords.X1 + 1.0f) * TotalScaleX * VSBackgroundDisc.TextureScale;
+	TextureDY = Abs(VSBackground.TextureCoords.Y2 - VSBackground.TextureCoords.Y1 + 1.0f) * TotalScaleY * VSBackground.TextureScale;
+
+	ScreenX = (VSBackgroundDisc.PosX * HudCanvasScale * C.SizeX) + (((1.0f - HudCanvasScale) * 0.5f) * C.SizeX);
+	ScreenY = (VSBackground.PosY * HudCanvasScale * C.SizeY) + (((1.0f - HudCanvasScale) * 0.5f) * C.SizeY);
+	ScreenX += VSBackgroundDisc.OffsetX * TotalScaleX + TextureDX*1;
+	ScreenY += VSBackground.OffsetY * TotalScaleY + TextureDY*0.45;
+
+	// And finally... we can draw!
+	C.Font = GetMediumFont( C.ClipX * HUDScale );
+	C.TextSize( output, XL, YL );
+	C.Style = ERenderStyle.STY_Alpha;
+
+	// defender version
+	if ( PawnOwner == None )
+		playerteam = PlayerOwner.GetTeamNum();
+	else
+		playerteam = PawnOwner.GetTeamNum();
+	if ( ASGRI.IsDefender(playerteam) )
+		bIsBehindOtherTeam = !bIsBehindOtherTeam;
+
+	if ( bIsBehindOtherTeam )
+	{
+		output = "-" $ output;
+		C.DrawColor = C.MakeColor( 255, 0, 0, 255 );
+	}
+	else
+		C.DrawColor = C.MakeColor( 0, 255, 0, 255 );
+
+	C.SetPos( ScreenX, ScreenY - YL/2);
+	C.DrawText( output, false );
+}

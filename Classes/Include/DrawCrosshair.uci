@@ -1,5 +1,5 @@
 #include Classes\Include\_Internal\DrawCrosshair.uci
-simulated function DrawCrosshair (Canvas C)
+simulated function DrawCrosshair(Canvas C)
 {
 	WideDrawCrosshair(C);
 }
