@@ -89,6 +89,9 @@ event PlayerInput(float DeltaTime)
 			FixASTurretFOV(ASTurret(Pawn));
 			return;
 		}
+		//Special exception for ASVehicle_SpaceFighter_Human (and Skaarj)
+		if (ASVehicle_SpaceFighter_Human(Pawn) != None)
+			return;
 		CachedDesiredFOV = GetHorPlusFOV(DesiredFOV);
 		DesiredFOV = CachedDesiredFOV;
 		return;
