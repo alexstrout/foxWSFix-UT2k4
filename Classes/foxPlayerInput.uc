@@ -250,7 +250,7 @@ defaultproperties
 	CachedGroupOffset=255
 	Desired43FOV=90f
 	bCorrectMouseSensitivity=true
-	WideHUDMap(0)=(HUDClass=class'HudCDeathMatch',WideHUD="HUDFix.HudWDeathMatch")
+	/* WideHUDMap(0)=(HUDClass=class'HudCDeathMatch',WideHUD="HUDFix.HudWDeathMatch")
 	WideHUDMap(1)=(HUDClass=class'HudCTeamDeathMatch',WideHUD="HUDFix.HudWTeamDeathMatch")
 	WideHUDMap(2)=(HUDClass=class'HudCCaptureTheFlag',WideHUD="HUDFix.HudWCaptureTheFlag")
 	WideHUDMap(3)=(HUDClass=class'ONSHUDOnslaught',WideHUD="HUDFix.ONSHUDWOnslaught")
@@ -259,5 +259,6 @@ defaultproperties
 	WideHUDMap(6)=(HUDClass=class'HudLMS',WideHUD="HUDFix.HudWLMS")
 	WideHUDMap(7)=(HUDClass=class'HudCDoubleDomination',WideHUD="HUDFix.HudWDoubleDomination")
 	WideHUDMap(8)=(HUDClass=class'HudCBombingRun',WideHUD="HUDFix.HudWBombingRun")
-	WideHUDMap(9)=(HUDClass=class'HudMutant',WideHUD="HUDFix.HudWMutant")
+	WideHUDMap(9)=(HUDClass=class'HudMutant',WideHUD="HUDFix.HudWMutant") */
+	WideHUDMap(0)=(HUDClass=class'HudCDeathMatch',WideHUD="foxWSFix.foxHudCDeathMatch")
 }

@@ -1,0 +1,4 @@
+//Variable declarations as a "header" include. Must be on top!
+//Vars courtesy of HUD Scaling Fix by Azarael
+var const float XShifts[9];
+var const float YShifts[9];

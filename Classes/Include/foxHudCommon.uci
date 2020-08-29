@@ -1,0 +1,178 @@
+//Just some common rendering code as includes
+//Courtesy of HUD Scaling Fix by Azarael, modified a bit for portability
+simulated final function DrawSpriteTileWidget(Canvas C, SpriteWidget W)
+{
+	//if (ResScaleX / ResScaleY * HUDScale == 1f) {
+	//	DrawSpriteWidget(C, W);
+	//	return;
+	//}
+
+	C.Style = W.RenderStyle;
+	C.DrawColor = W.Tints[TeamIndex];
+
+	if (W.Scale == 1.0f || W.ScaleMode == SM_None) {
+		C.SetPos(
+			(C.ClipX * W.PosX) + (W.OffsetX - Abs(W.TextureCoords.X2 - W.TextureCoords.X1) * XShifts[W.DrawPivot])
+				* W.TextureScale * ResScaleY * HUDScale,
+			(C.ClipY * W.PosY) + (W.OffsetY - Abs(W.TextureCoords.Y2 - W.TextureCoords.Y1) * YShifts[W.DrawPivot])
+				* W.TextureScale * ResScaleY * HUDScale
+		);
+		C.DrawTile(
+			W.WidgetTexture,
+			Abs(W.TextureCoords.X2 - W.TextureCoords.X1)
+				* W.TextureScale * ResScaleY * HUDScale,
+			Abs(W.TextureCoords.Y2 - W.TextureCoords.Y1)
+				* W.TextureScale * ResScaleY * HUDScale,
+			W.TextureCoords.X1,
+			W.TextureCoords.Y1,
+			W.TextureCoords.X2 - W.TextureCoords.X1,
+			W.TextureCoords.Y2 - W.TextureCoords.Y1
+		);
+	}
+	else {
+		switch(W.ScaleMode) {
+			case SM_Right:
+				C.SetPos(
+					(C.ClipX * W.PosX) + (W.OffsetX - Abs(W.TextureCoords.X2 - W.TextureCoords.X1) * XShifts[W.DrawPivot])
+						* W.TextureScale * ResScaleY * HUDScale,
+					(C.ClipY * W.PosY) + (W.OffsetY - Abs(W.TextureCoords.Y2 - W.TextureCoords.Y1) * YShifts[W.DrawPivot])
+						* W.TextureScale * ResScaleY * HUDScale
+				);
+				C.DrawTile(
+					W.WidgetTexture,
+					Abs(W.TextureCoords.X2 - W.TextureCoords.X1)
+						* W.TextureScale * ResScaleY * HUDScale * W.Scale,
+					Abs(W.TextureCoords.Y2 - W.TextureCoords.Y1)
+						* W.TextureScale * ResScaleY * HUDScale,
+					W.TextureCoords.X1,
+					W.TextureCoords.Y1,
+					(W.TextureCoords.X2 - W.TextureCoords.X1)
+						* W.Scale,
+					W.TextureCoords.Y2 - W.TextureCoords.Y1
+				);
+				break;
+
+			case SM_Left:
+				C.SetPos(
+					(C.ClipX * W.PosX) + (W.OffsetX - Abs(W.TextureCoords.X2 - W.TextureCoords.X1) * XShifts[W.DrawPivot]
+							+ (Abs(W.TextureCoords.X2 - W.TextureCoords.X1) * (1 - W.Scale)))
+						* W.TextureScale * ResScaleY * HUDScale,
+					(C.ClipY * W.PosY) + (W.OffsetY - Abs(W.TextureCoords.Y2 - W.TextureCoords.Y1) * YShifts[W.DrawPivot])
+						* W.TextureScale * ResScaleY * HUDScale
+				);
+				C.DrawTile(
+					W.WidgetTexture,
+					Abs(W.TextureCoords.X2 - W.TextureCoords.X1)
+						* W.TextureScale * ResScaleY * HUDScale * W.Scale,
+					Abs(W.TextureCoords.Y2 - W.TextureCoords.Y1)
+						* W.TextureScale * ResScaleY * HUDScale,
+					W.TextureCoords.X1
+						+ ((W.TextureCoords.X2 - W.TextureCoords.X1) * (1 - W.Scale)),
+					W.TextureCoords.Y1,
+					(W.TextureCoords.X2 - W.TextureCoords.X1)
+						* W.Scale,
+					W.TextureCoords.Y2 - W.TextureCoords.Y1
+				);
+				break;
+
+			case SM_Down:
+				C.SetPos(
+					(C.ClipX * W.PosX) + (W.OffsetX - Abs(W.TextureCoords.X2 - W.TextureCoords.X1) * XShifts[W.DrawPivot])
+						* W.TextureScale * ResScaleY * HUDScale,
+					(C.ClipY * W.PosY) + (W.OffsetY - Abs(W.TextureCoords.Y2 - W.TextureCoords.Y1) * YShifts[W.DrawPivot])
+						* W.TextureScale * ResScaleY * HUDScale
+				);
+				C.DrawTile(
+					W.WidgetTexture,
+					Abs(W.TextureCoords.X2 - W.TextureCoords.X1)
+						* W.TextureScale * ResScaleY * HUDScale,
+					Abs(W.TextureCoords.Y2 - W.TextureCoords.Y1)
+						* W.TextureScale * ResScaleY * HUDScale * W.Scale,
+					W.TextureCoords.X1,
+					W.TextureCoords.Y1,
+					W.TextureCoords.X2 - W.TextureCoords.X1,
+					(W.TextureCoords.Y2 - W.TextureCoords.Y1)
+						* W.Scale
+				);
+				break;
+			case SM_Up:
+				C.SetPos(
+					(C.ClipX * W.PosX) + (W.OffsetX - Abs(W.TextureCoords.X2 - W.TextureCoords.X1) * XShifts[W.DrawPivot])
+						* W.TextureScale * ResScaleY * HUDScale,
+					(C.ClipY * W.PosY) + (W.OffsetY - Abs(W.TextureCoords.Y2 - W.TextureCoords.Y1) * YShifts[W.DrawPivot]
+							+ Abs(W.TextureCoords.Y2 - W.TextureCoords.Y1) * (1 - W.Scale))
+						* W.TextureScale * ResScaleY * HUDScale
+				);
+				C.DrawTile(
+					W.WidgetTexture,
+					Abs(W.TextureCoords.X2 - W.TextureCoords.X1)
+						* W.TextureScale * ResScaleY * HUDScale,
+					Abs(W.TextureCoords.Y2 - W.TextureCoords.Y1)
+						* W.TextureScale * ResScaleY * HUDScale * W.Scale,
+					W.TextureCoords.X1,
+					W.TextureCoords.Y1
+						+ (W.TextureCoords.Y2 - W.TextureCoords.Y1) * (1 - W.Scale),
+					W.TextureCoords.X2 - W.TextureCoords.X1,
+					(W.TextureCoords.Y2 - W.TextureCoords.Y1)
+						* W.Scale
+				);
+		}
+	}
+}
+
+simulated final function DrawNumericTileWidget(Canvas C, NumericWidget W, DigitSet D)
+{
+	local String s;
+	local array<String> t;
+	local int padding, length, i;
+	local byte coordindex;
+
+	//if (ResScaleX / ResScaleY * HUDScale == 1f) {
+	//	DrawNumericWidget(C, W, D);
+	//	return;
+	//}
+
+	C.Style = W.RenderStyle;
+	C.DrawColor = W.Tints[TeamIndex];
+
+	s = String(W.Value);
+	length = Len(s);
+
+	padding = Max(0, W.MinDigitCount - length);
+
+	if (W.bPadWithZeroes != 0)
+		length += padding;
+	for (i = 0; i < length; i++) {
+		if (W.bPadWithZeroes == 1 && i < padding)
+			t[i] = "0";
+		else {
+			t[i] = "";
+			EatStr(t[i], s, 1);
+		}
+	}
+
+	C.SetPos(
+		(C.ClipX * W.PosX) + (W.OffsetX - (D.TextureCoords[0].X2 - D.TextureCoords[0].X1) * (((length + padding) * XShifts[W.DrawPivot]) - (padding * (1 - W.bPadWithZeroes))))
+			* W.TextureScale * ResScaleY * HUDScale,
+		(C.ClipY * W.PosY) + (W.OffsetY - (D.TextureCoords[0].Y2 - D.TextureCoords[0].Y1) * YShifts[W.DrawPivot])
+			* W.TextureScale * ResScaleY * HUDScale
+	);
+
+	for (i = 0; i < length; i++) {
+		if (t[i] == "-")
+			coordindex = 10;
+		else coordindex = byte(t[i]);
+
+		C.DrawTile(
+			D.DigitTexture,
+			(D.TextureCoords[coordindex].X2 - D.TextureCoords[coordindex].X1)
+				* W.TextureScale * ResScaleY * HUDScale,
+			(D.TextureCoords[coordindex].Y2 - D.TextureCoords[coordindex].Y1)
+				* W.TextureScale * ResScaleY * HUDScale,
+			D.TextureCoords[coordindex].X1,
+			D.TextureCoords[coordindex].Y1,
+			D.TextureCoords[coordindex].X2 - D.TextureCoords[coordindex].X1,
+			D.TextureCoords[coordindex].Y2 - D.TextureCoords[coordindex].Y1
+		);
+	}
+}

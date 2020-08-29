@@ -1,0 +1,155 @@
+	local Pawn RealPawnOwner;
+	local class<Ammunition> AmmoClass;
+
+	ZoomFadeOut(C);
+
+	if ( PawnOwner != None )
+	{
+		if( bShowWeaponInfo && (PawnOwner.Weapon != None) )
+		{
+			if ( PawnOwner.Weapon.bShowChargingBar )
+    			DrawChargeBar(C);
+
+			DrawSpriteTileWidget( C, HudBorderAmmo );
+
+			if( PawnOwner.Weapon != None )
+			{
+				AmmoClass = PawnOwner.Weapon.GetAmmoClass(0);
+				if ( (AmmoClass != None) && (AmmoClass.Default.IconMaterial != None) )
+				{
+					if( (CurAmmoPrimary/MaxAmmoPrimary) < 0.15)
+					{
+						DrawSpriteTileWidget(C, HudAmmoALERT);
+						HudAmmoALERT.Tints[TeamIndex] = HudColorTeam[TeamIndex];
+						if ( AmmoClass.Default.IconFlashMaterial == None )
+							AmmoIcon.WidgetTexture = Material'HudContent.Generic.HUDPulse';
+						else
+							AmmoIcon.WidgetTexture = AmmoClass.Default.IconFlashMaterial;
+					}
+					else
+					{
+						AmmoIcon.WidgetTexture = AmmoClass.default.IconMaterial;
+					}
+
+					AmmoIcon.TextureCoords = AmmoClass.Default.IconCoords;
+					DrawSpriteTileWidget (C, AmmoIcon);
+				}
+			}
+			DrawNumericTileWidget( C, DigitsAmmo, DigitsBig);
+		}
+
+		if ( bShowWeaponBar && (PawnOwner.Weapon != None) )
+			DrawWeaponBar(C);
+
+		if( bShowPersonalInfo )
+		{
+    		if ( Vehicle(PawnOwner) != None && Vehicle(PawnOwner).Driver != None )
+    		{
+    			if (Vehicle(PawnOwner).bShowChargingBar)
+    				DrawVehicleChargeBar(C);
+    			RealPawnOwner = PawnOwner;
+    			PawnOwner = Vehicle(PawnOwner).Driver;
+    		}
+
+			DrawHUDAnimWidget( HudBorderHealthIcon, default.HudBorderHealthIcon.TextureScale, LastHealthPickupTime, 0.6, 0.6);
+			DrawSpriteTileWidget( C, HudBorderHealth );
+
+			if(CurHealth/PawnOwner.HealthMax < 0.26)
+			{
+				HudHealthALERT.Tints[TeamIndex] = HudColorTeam[TeamIndex];
+				DrawSpriteTileWidget( C, HudHealthALERT);
+				HudBorderHealthIcon.WidgetTexture = Material'HudContent.Generic.HUDPulse';
+			}
+			else
+				HudBorderHealthIcon.WidgetTexture = default.HudBorderHealth.WidgetTexture;
+
+			DrawSpriteTileWidget( C, HudBorderHealthIcon);
+
+			if( CurHealth < LastHealth )
+				LastDamagedHealth = Level.TimeSeconds;
+
+			DrawHUDAnimDigit( DigitsHealth, default.DigitsHealth.TextureScale, LastDamagedHealth, 0.8, default.DigitsHealth.Tints[TeamIndex], HudColorHighLight);
+			DrawNumericTileWidget( C, DigitsHealth, DigitsBig);
+
+			if(CurHealth > 999)
+			{
+				DigitsHealth.OffsetX=220;
+				DigitsHealth.OffsetY=-35;
+				DigitsHealth.TextureScale=0.39;
+			}
+			else
+			{
+				DigitsHealth.OffsetX = default.DigitsHealth.OffsetX;
+				DigitsHealth.OffsetY = default.DigitsHealth.OffsetY;
+				DigitsHealth.TextureScale = default.DigitsHealth.TextureScale;
+			}
+
+			if (RealPawnOwner != None)
+			{
+				PawnOwner = RealPawnOwner;
+
+				DrawSpriteTileWidget( C, HudBorderVehicleHealth );
+
+				if (CurVehicleHealth/PawnOwner.HealthMax < 0.26)
+				{
+					HudVehicleHealthALERT.Tints[TeamIndex] = HudColorTeam[TeamIndex];
+					DrawSpriteTileWidget(C, HudVehicleHealthALERT);
+					HudBorderVehicleHealthIcon.WidgetTexture = Material'HudContent.Generic.HUDPulse';
+				}
+				else
+					HudBorderVehicleHealthIcon.WidgetTexture = default.HudBorderVehicleHealth.WidgetTexture;
+
+				DrawSpriteTileWidget(C, HudBorderVehicleHealthIcon);
+
+				if (CurVehicleHealth < LastVehicleHealth )
+					LastDamagedVehicleHealth = Level.TimeSeconds;
+
+				DrawHUDAnimDigit(DigitsVehicleHealth, default.DigitsVehicleHealth.TextureScale, LastDamagedVehicleHealth, 0.8, default.DigitsVehicleHealth.Tints[TeamIndex], HudColorHighLight);
+				DrawNumericTileWidget(C, DigitsVehicleHealth, DigitsBig);
+
+				if (CurVehicleHealth > 999)
+				{
+					DigitsVehicleHealth.OffsetX = 220;
+					DigitsVehicleHealth.OffsetY = -35;
+					DigitsVehicleHealth.TextureScale = 0.39;
+				}
+				else
+				{
+					DigitsVehicleHealth.OffsetX = default.DigitsVehicleHealth.OffsetX;
+					DigitsVehicleHealth.OffsetY = default.DigitsVehicleHealth.OffsetY;
+					DigitsVehicleHealth.TextureScale = default.DigitsVehicleHealth.TextureScale;
+				}
+			}
+
+			DrawAdrenaline(C);
+		}
+	}
+
+	UpdateRankAndSpread(C);
+    DrawUDamage(C);
+
+    if(bDrawTimer)
+		DrawTimer(C);
+
+    // Temp Drawwwith Hud Colors
+    HudBorderShield.Tints[0] = HudColorRed;
+    HudBorderShield.Tints[1] = HudColorBlue;
+    HudBorderHealth.Tints[0] = HudColorRed;
+    HudBorderHealth.Tints[1] = HudColorBlue;
+    HudBorderVehicleHealth.Tints[0] = HudColorRed;
+    HudBorderVehicleHealth.Tints[1] = HudColorBlue;
+    HudBorderAmmo.Tints[0] = HudColorRed;
+    HudBorderAmmo.Tints[1] = HudColorBlue;
+
+    if( bShowPersonalInfo && (CurShield > 0) )
+    {
+	    DrawSpriteTileWidget( C, HudBorderShield );
+		DrawSpriteTileWidget( C, HudBorderShieldIcon);
+		DrawNumericTileWidget( C, DigitsShield, DigitsBig);
+		DrawHUDAnimWidget( HudBorderShieldIcon, default.HudBorderShieldIcon.TextureScale, LastArmorPickupTime, 0.6, 0.6);
+    }
+
+	if( Level.TimeSeconds - LastVoiceGainTime < 0.333 )
+		DisplayVoiceGain(C);
+
+    DisplayLocalMessages (C);

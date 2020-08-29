@@ -1,0 +1,84 @@
+simulated function DrawAdrenaline( Canvas C )
+{
+	if ( !PlayerOwner.bAdrenalineEnabled )
+		return;
+
+	DrawSpriteTileWidget( C, AdrenalineBackground );
+	DrawSpriteTileWidget( C, AdrenalineBackgroundDisc );
+
+	if( CurEnergy == MaxEnergy )
+	{
+		DrawSpriteTileWidget( C, AdrenalineAlert );
+		AdrenalineAlert.Tints[TeamIndex] = HudColorHighLight;
+	}
+
+	DrawSpriteTileWidget( C, AdrenalineIcon );
+	DrawNumericTileWidget( C, AdrenalineCount, DigitsBig);
+
+	if(CurEnergy > LastEnergy)
+		LastAdrenalineTime = Level.TimeSeconds;
+
+	LastEnergy = CurEnergy;
+	DrawHUDAnimWidget( AdrenalineIcon, default.AdrenalineIcon.TextureScale, LastAdrenalineTime, 0.6, 0.6);
+	AdrenalineBackground.Tints[TeamIndex] = HudColorBlack;
+	AdrenalineBackground.Tints[TeamIndex].A = 150;
+
+}
+
+simulated function DrawTimer(Canvas C)
+{
+	local GameReplicationInfo GRI;
+	local int Minutes, Hours, Seconds;
+
+	GRI = PlayerOwner.GameReplicationInfo;
+
+	if ( GRI.TimeLimit != 0 )
+		Seconds = GRI.RemainingTime;
+	else
+		Seconds = GRI.ElapsedTime;
+
+	TimerBackground.Tints[TeamIndex] = HudColorBlack;
+    TimerBackground.Tints[TeamIndex].A = 150;
+
+	DrawSpriteTileWidget( C, TimerBackground);
+	DrawSpriteTileWidget( C, TimerBackgroundDisc);
+	DrawSpriteTileWidget( C, TimerIcon);
+
+	TimerMinutes.OffsetX = default.TimerMinutes.OffsetX - 80;
+	TimerSeconds.OffsetX = default.TimerSeconds.OffsetX - 80;
+	TimerDigitSpacer[0].OffsetX = Default.TimerDigitSpacer[0].OffsetX;
+	TimerDigitSpacer[1].OffsetX = Default.TimerDigitSpacer[1].OffsetX;
+
+	if( Seconds > 3600 )
+    {
+        Hours = Seconds / 3600;
+        Seconds -= Hours * 3600;
+
+		DrawNumericTileWidget( C, TimerHours, DigitsBig);
+        TimerHours.Value = Hours;
+
+		if(Hours>9)
+		{
+			TimerMinutes.OffsetX = default.TimerMinutes.OffsetX;
+			TimerSeconds.OffsetX = default.TimerSeconds.OffsetX;
+		}
+		else
+		{
+			TimerMinutes.OffsetX = default.TimerMinutes.OffsetX -40;
+			TimerSeconds.OffsetX = default.TimerSeconds.OffsetX -40;
+			TimerDigitSpacer[0].OffsetX = Default.TimerDigitSpacer[0].OffsetX - 32;
+			TimerDigitSpacer[1].OffsetX = Default.TimerDigitSpacer[1].OffsetX - 32;
+		}
+		DrawSpriteTileWidget( C, TimerDigitSpacer[0]);
+	}
+	DrawSpriteTileWidget( C, TimerDigitSpacer[1]);
+
+	Minutes = Seconds / 60;
+    Seconds -= Minutes * 60;
+
+    TimerMinutes.Value = Min(Minutes, 60);
+	TimerSeconds.Value = Min(Seconds, 60);
+
+	DrawNumericTileWidget( C, TimerMinutes, DigitsBig);
+	DrawNumericTileWidget( C, TimerSeconds, DigitsBig);
+}

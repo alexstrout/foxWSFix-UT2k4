@@ -1,0 +1,37 @@
+simulated function UpdateRankAndSpread(Canvas C)
+{
+    local int i;
+
+	if ( (Scoreboard == None) || !Scoreboard.UpdateGRI() )
+		return;
+
+    for( i=0 ; i<PlayerOwner.GameReplicationInfo.PRIArray.Length ; i++ )
+         if(PawnOwnerPRI == PlayerOwner.GameReplicationInfo.PRIArray[i])
+         {
+            myRank.Value = (i+1);
+            break;
+         }
+
+	myScore.Value = Min (PawnOwnerPRI.Score, 999);  // max display space
+	if ( PawnOwnerPRI == PlayerOwner.GameReplicationInfo.PRIArray[0] )
+	{
+		if ( PlayerOwner.GameReplicationInfo.PRIArray.Length > 1 )
+			mySpread.Value = Min (PawnOwnerPRI.Score - PlayerOwner.GameReplicationInfo.PRIArray[1].Score, 999);
+		else
+			mySpread.Value = 0;
+	}
+	else
+		mySpread.Value = Min (PawnOwnerPRI.Score - PlayerOwner.GameReplicationInfo.PRIArray[0].Score, 999);
+
+    if( bShowPoints )
+    {
+		DrawSpriteTileWidget( C, MyScoreBackground );
+		MyScoreBackground.Tints[TeamIndex] = HudColorBlack;
+		MyScoreBackground.Tints[TeamIndex].A = 150;
+
+        DrawNumericTileWidget (C, myScore, DigitsBig);
+        if ( C.ClipX >= 640 )
+			DrawNumericTileWidget (C, mySpread, DigitsBig);
+        DrawNumericTileWidget (C, myRank, DigitsBig);
+    }
+}

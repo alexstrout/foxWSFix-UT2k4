@@ -1,0 +1,4 @@
+simulated function DrawHudPassA (Canvas C)
+{
+	#include Classes\Include\Internal\foxHudDrawPassA_c.uci
+}

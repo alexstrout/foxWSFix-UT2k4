@@ -1,0 +1,13 @@
+simulated function DrawWeaponBar( Canvas C )
+{
+    local int i, Count, Pos;
+    local float IconOffset;
+	//local float HudScaleOffset, HudMinScale; //Removed, no longer needed ~fox
+
+    local Weapon Weapons[WEAPON_BAR_SIZE];
+    local byte ExtraWeapon[WEAPON_BAR_SIZE];
+    local Inventory Inv;
+    local Weapon W, PendingWeapon;
+
+	#include Classes\Include\Internal\foxHudDrawWeapBar_c.uci
+}

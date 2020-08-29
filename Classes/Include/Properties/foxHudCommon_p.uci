@@ -1,0 +1,32 @@
+//All values below courtesy of HUD Scaling Fix by Azarael
+//Note: Parser can't process includes inside a defaultproperties block
+//However, you can apparently define multiple blocks anywhere you want
+//So you should be able to have your own custom block alongside this
+defaultproperties
+{
+	XShifts(1)=0.500000
+	XShifts(2)=1.000000
+	XShifts(3)=1.000000
+	XShifts(4)=1.000000
+	XShifts(5)=0.500000
+	XShifts(8)=0.500000
+	YShifts(3)=0.500000
+	YShifts(4)=1.000000
+	YShifts(5)=1.000000
+	YShifts(6)=1.000000
+	YShifts(7)=0.500000
+	YShifts(8)=0.500000
+	DigitsVehicleHealth=(PosX=0.000000,OffsetX=357)
+	HudVehicleHealthALERT=(PosX=0.000000,OffsetX=168)
+	HudBorderVehicleHealth=(PosX=0.000000,OffsetX=168)
+	HudBorderVehicleHealthIcon=(PosX=0.000000,OffsetX=173)
+	BarWeaponIcon(0)=(DrawPivot=DP_MiddleMiddle,OffsetY=-30)
+	BarWeaponIcon(1)=(DrawPivot=DP_MiddleMiddle,OffsetY=-30)
+	BarWeaponIcon(2)=(DrawPivot=DP_MiddleMiddle,OffsetY=-25)
+	BarWeaponIcon(3)=(DrawPivot=DP_MiddleMiddle,OffsetY=-30)
+	BarWeaponIcon(4)=(DrawPivot=DP_MiddleMiddle,OffsetY=-30)
+	BarWeaponIcon(5)=(DrawPivot=DP_MiddleMiddle,OffsetY=-30)
+	BarWeaponIcon(6)=(DrawPivot=DP_MiddleMiddle,OffsetY=-30)
+	BarWeaponIcon(7)=(DrawPivot=DP_MiddleMiddle,OffsetY=-30)
+	BarWeaponIcon(8)=(DrawPivot=DP_MiddleMiddle,OffsetY=-30)
+}
