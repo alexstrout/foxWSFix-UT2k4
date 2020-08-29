@@ -1,0 +1,29 @@
+#include Classes\Include\Team\_Internal\DrawHudPassA.uci
+function TeamAssaultWideDrawHudPassA (Canvas C)
+{
+	local bool	bOldShowWeaponInfo, bOldShowPersonalInfo;
+	local class<Ammunition> AmmoClass;
+
+	// Ammo Count
+	bOldShowWeaponInfo = bShowWeaponInfo;
+	if ( PawnOwner != None && PawnOwner.Weapon != None )
+	{
+		AmmoClass = PawnOwner.Weapon.GetAmmoClass(0);
+		if ( (AmmoClass == None) || ClassIsChildOf(AmmoClass,class'Ammo_Dummy') )
+			bShowWeaponInfo = false;
+	}
+
+	// Healh info
+	bOldShowPersonalInfo = bShowPersonalInfo;
+	if ( (ASVehicle(PawnOwner) != None) && ASVehicle(PawnOwner).bCustomHealthDisplay )
+		bShowPersonalInfo = false;
+
+	TeamWideDrawHudPassA( C );
+
+	bShowWeaponInfo		= bOldShowWeaponInfo;
+	bShowPersonalInfo	= bOldShowPersonalInfo;
+
+	// Vehicle Radar
+	if ( bDrawRadar && Vehicle(PawnOwner) != None && Vehicle(PawnOwner).bHasRadar )
+		DrawRadarPassA( C );
+}

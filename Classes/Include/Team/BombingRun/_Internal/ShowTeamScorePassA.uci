@@ -1,0 +1,38 @@
+#include Classes\Include\Team\_Internal\ShowTeamScorePassA.uci
+function TeamBombingRunWideShowTeamScorePassA(Canvas C)
+{
+	local vector Pos;
+
+	TeamWideShowTeamScorePassA(C);
+
+	DrawSpriteTileWidget (C, BombBG);
+	DrawSpriteTileWidget (C, BombWidget.Widgets[BombWidget.BombState]);
+	DrawSpriteTileWidget (C, BombWidgetStatus.Widgets[BombWidget.BombState]);
+
+	if ( BombFlag == None )
+		ForEach DynamicActors(Class'xBombFlag', BombFlag)
+			break;
+
+	if ( (PawnOwner != None) && (BallLauncher(PawnOwner.Weapon) != None) )
+	{
+		if ( (MyBombDelivery == None) || (MyBombDelivery.Team == PlayerOwner.PlayerReplicationInfo.Team.TeamIndex)	)
+			ForEach DynamicActors(Class'xBombDelivery', MyBombDelivery)
+				if ( MyBombDelivery.Team != PlayerOwner.PlayerReplicationInfo.Team.TeamIndex )
+					break;
+		if ( MyBombDelivery == None )
+			return;
+		Pos = MyBombDelivery.Location;
+	}
+	else if ( BombFlag != None )
+	{
+		if ( Pawn(BombFlag.Base) != None )
+			Pos = BombFlag.Base.Location;
+		else
+			Pos = BombFlag.Location;
+	}
+	else if ( PlayerOwner.GameReplicationInfo != None )
+		Pos = PlayerOwner.GameReplicationInfo.FlagPos;
+
+	C.DrawColor = HudColorHighLight;
+	Draw2DLocationDot(C, Pos, 0.5 - 0.0075*HUDScale, 0.03*HUDScale, 0.027*HUDScale, 0.035*HUDScale);
+}

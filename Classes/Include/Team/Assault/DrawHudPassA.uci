@@ -1,0 +1,5 @@
+#include Classes\Include\Team\Assault\_Internal\DrawHudPassA.uci
+simulated function DrawHudPassA (Canvas C)
+{
+	TeamAssaultWideDrawHudPassA(C);
+}

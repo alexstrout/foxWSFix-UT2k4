@@ -1,0 +1,5 @@
+#include Classes\Include\Team\_Internal\ShowVersusIcon.uci
+simulated function ShowVersusIcon(Canvas C)
+{
+	TeamWideShowVersusIcon(C);
+}

@@ -1,0 +1,101 @@
+#include Classes\Include\Team\_Internal\ShowTeamScorePassA.uci
+function TeamAssaultWideShowTeamScorePassA(Canvas C)
+{
+	local float	PosY;
+
+	if ( ASGRI == None )
+		return;
+
+	//
+	// HUDBase texture
+	//
+
+	/* Round Time Limit */
+	if ( ASGRI.RoundTimeLimit > 0 )
+	{
+		RoundTimeBackground.Tints[TeamIndex] = HudColorBlack;
+		RoundTimeBackground.Tints[TeamIndex].A = 150;
+		DrawSpriteTileWidget (C, RoundTimeBackground);
+		DrawSpriteTileWidget (C, RoundTimeBackgroundDisc);
+		DrawSpriteTileWidget (C, RoundTimeSeparator);
+		DrawSpriteTileWidget (C, RoundTimeIcon);
+		PosY += 0.06 * HUDScale;
+	}
+
+	if ( Level.Game == None || !ASGameInfo(Level.Game).bDisableReinforcements )
+	{
+		ReinforceBackground.PosY		= PosY;
+		ReinforceBackgroundDisc.PosY	= PosY;
+		ReinforcePulse.PosY				= PosY;
+		ReinforceIcon.PosY				= PosY;
+		ReinforceSprNum.PosY			= PosY;
+		PosY += 0.06 * HUDScale;
+
+		/* Reinforcements count down */
+		ReinforceBackground.Tints[TeamIndex] = HudColorBlack;
+		ReinforceBackground.Tints[TeamIndex].A = 150;
+		DrawSpriteTileWidget (C, ReinforceBackground);
+		DrawSpriteTileWidget (C, ReinforceBackgroundDisc);
+		ReinforcePulse.Tints[TeamIndex] = HudColorHighLight;
+		if ( ASGRI.ReinforcementCountDown < 1 )	// Pulse when reinforcements arrive
+			DrawSpriteTileWidget( C, ReinforcePulse );
+		DrawSpriteTileWidget (C, ReinforceIcon);
+	}
+
+	/* second attack wave comparison */
+	if ( ASGRI != None && (ASGRI.CurrentRound % 2 == 0) && !ASGRI.IsPracticeRound() && IsVSRelevant() )
+	{
+		VSBackground.PosY		= PosY;
+		VSBackgroundDisc.PosY	= PosY;
+		VSIcon.PosY				= PosY;
+		PosY += 0.06 * HUDScale;
+
+		VSBackground.Tints[TeamIndex] = HudColorBlack;
+		VSBackground.Tints[TeamIndex].A = 150;
+		DrawSpriteTileWidget (C, VSBackground);
+		DrawSpriteTileWidget (C, VSBackgroundDisc);
+		DrawSpriteTileWidget (C, VSIcon);
+	}
+
+	/* Teleport */
+	if ( ASPRI !=None && ASPRI.bTeleportToSpawnArea && TeleportSprNum.Value >= 0 )
+	{
+		TeleportBackground.PosY		= PosY;
+		TeleportBackgroundDisc.PosY	= PosY;
+		TeleportPulse.PosY			= PosY;
+		TeleportIcon.PosY			= PosY;
+		TeleportSprNum.PosY			= PosY;
+		PosY += 0.06 * HUDScale;
+
+		TeleportBackground.Tints[TeamIndex] = HudColorBlack;
+		TeleportBackground.Tints[TeamIndex].A = 150;
+		DrawSpriteTileWidget (C, TeleportBackground);
+		DrawSpriteTileWidget (C, TeleportBackgroundDisc);
+		TeleportPulse.Tints[TeamIndex] = HudColorHighLight;
+		DrawSpriteTileWidget( C, TeleportPulse );
+		DrawSpriteTileWidget (C, TeleportIcon);
+	}
+
+	//
+	// Numeric
+	//
+
+	/* Round Time Limit */
+	if ( ASGRI.RoundTimeLimit > 0 )
+	{
+		DrawNumericTileWidget (C, RoundTimeMinutes, DigitsBig);
+		DrawNumericTileWidget (C, RoundTimeSeconds, DigitsBig);
+	}
+
+	/* reinforcements */
+	if ( Level.Game == None || !ASGameInfo(Level.Game).bDisableReinforcements )
+		DrawNumericTileWidget (C, ReinforceSprNum, DigitsBig);
+
+	/* second attack wave comparison */
+	if ( ASGRI != None && (ASGRI.CurrentRound % 2 == 0) && !ASGRI.IsPracticeRound() && IsVSRelevant() )
+		DrawTeamVS( C );
+
+	/* Teleport */
+	if ( ASPRI !=None && ASPRI.bTeleportToSpawnArea && TeleportSprNum.Value >= 0 )
+		DrawNumericTileWidget (C, TeleportSprNum, DigitsBig);
+}

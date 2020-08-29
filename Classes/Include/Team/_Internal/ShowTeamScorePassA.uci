@@ -1,0 +1,27 @@
+//#include Classes\Include\_Internal\ShowTeamScorePassA.uci
+function TeamWideShowTeamScorePassA(Canvas C)
+{
+	if ( bShowPoints )
+	{
+		DrawSpriteTileWidget (C, TeamScoreBackground[0]);
+		DrawSpriteTileWidget (C, TeamScoreBackground[1]);
+		DrawSpriteTileWidget (C, TeamScoreBackgroundDisc[0]);
+		DrawSpriteTileWidget (C, TeamScoreBackgroundDisc[1]);
+
+		TeamScoreBackground[0].Tints[TeamIndex] = HudColorBlack;
+		TeamScoreBackground[0].Tints[TeamIndex].A = 150;
+		TeamScoreBackground[1].Tints[TeamIndex] = HudColorBlack;
+		TeamScoreBackground[1].Tints[TeamIndex].A = 150;
+
+
+		if (TeamSymbols[0].WidgetTexture != None)
+			DrawSpriteTileWidget (C, TeamSymbols[0]);
+
+		if (TeamSymbols[1].WidgetTexture != None)
+			DrawSpriteTileWidget (C, TeamSymbols[1]);
+
+		ShowVersusIcon(C);
+	 	DrawNumericTileWidget (C, ScoreTeam[0], DigitsBig);
+		DrawNumericTileWidget (C, ScoreTeam[1], DigitsBig);
+	}
+}
