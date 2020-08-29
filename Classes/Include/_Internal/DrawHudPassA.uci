@@ -1,3 +1,5 @@
+function WideDrawHudPassA (Canvas C)
+{
 	local Pawn RealPawnOwner;
 	local class<Ammunition> AmmoClass;
 
@@ -8,7 +10,7 @@
 		if( bShowWeaponInfo && (PawnOwner.Weapon != None) )
 		{
 			if ( PawnOwner.Weapon.bShowChargingBar )
-    			DrawChargeBar(C);
+				DrawChargeBar(C);
 
 			DrawSpriteTileWidget( C, HudBorderAmmo );
 
@@ -43,13 +45,13 @@
 
 		if( bShowPersonalInfo )
 		{
-    		if ( Vehicle(PawnOwner) != None && Vehicle(PawnOwner).Driver != None )
-    		{
-    			if (Vehicle(PawnOwner).bShowChargingBar)
-    				DrawVehicleChargeBar(C);
-    			RealPawnOwner = PawnOwner;
-    			PawnOwner = Vehicle(PawnOwner).Driver;
-    		}
+			if ( Vehicle(PawnOwner) != None && Vehicle(PawnOwner).Driver != None )
+			{
+				if (Vehicle(PawnOwner).bShowChargingBar)
+					DrawVehicleChargeBar(C);
+				RealPawnOwner = PawnOwner;
+				PawnOwner = Vehicle(PawnOwner).Driver;
+			}
 
 			DrawHUDAnimWidget( HudBorderHealthIcon, default.HudBorderHealthIcon.TextureScale, LastHealthPickupTime, 0.6, 0.6);
 			DrawSpriteTileWidget( C, HudBorderHealth );
@@ -126,30 +128,31 @@
 	}
 
 	UpdateRankAndSpread(C);
-    DrawUDamage(C);
+	DrawUDamage(C);
 
-    if(bDrawTimer)
+	if(bDrawTimer)
 		DrawTimer(C);
 
-    // Temp Drawwwith Hud Colors
-    HudBorderShield.Tints[0] = HudColorRed;
-    HudBorderShield.Tints[1] = HudColorBlue;
-    HudBorderHealth.Tints[0] = HudColorRed;
-    HudBorderHealth.Tints[1] = HudColorBlue;
-    HudBorderVehicleHealth.Tints[0] = HudColorRed;
-    HudBorderVehicleHealth.Tints[1] = HudColorBlue;
-    HudBorderAmmo.Tints[0] = HudColorRed;
-    HudBorderAmmo.Tints[1] = HudColorBlue;
+	// Temp Drawwwith Hud Colors
+	HudBorderShield.Tints[0] = HudColorRed;
+	HudBorderShield.Tints[1] = HudColorBlue;
+	HudBorderHealth.Tints[0] = HudColorRed;
+	HudBorderHealth.Tints[1] = HudColorBlue;
+	HudBorderVehicleHealth.Tints[0] = HudColorRed;
+	HudBorderVehicleHealth.Tints[1] = HudColorBlue;
+	HudBorderAmmo.Tints[0] = HudColorRed;
+	HudBorderAmmo.Tints[1] = HudColorBlue;
 
-    if( bShowPersonalInfo && (CurShield > 0) )
-    {
-	    DrawSpriteTileWidget( C, HudBorderShield );
+	if( bShowPersonalInfo && (CurShield > 0) )
+	{
+		DrawSpriteTileWidget( C, HudBorderShield );
 		DrawSpriteTileWidget( C, HudBorderShieldIcon);
 		DrawNumericTileWidget( C, DigitsShield, DigitsBig);
 		DrawHUDAnimWidget( HudBorderShieldIcon, default.HudBorderShieldIcon.TextureScale, LastArmorPickupTime, 0.6, 0.6);
-    }
+	}
 
 	if( Level.TimeSeconds - LastVoiceGainTime < 0.333 )
 		DisplayVoiceGain(C);
 
-    DisplayLocalMessages (C);
+	DisplayLocalMessages (C);
+}

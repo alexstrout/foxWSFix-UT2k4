@@ -1,0 +1,20 @@
+function WideDrawVehicleChargeBar(Canvas C)
+{
+	local float ScaleFactor;
+
+	ScaleFactor = HUDScale * 0.135 * C.ClipX;
+	ScaleFactor *= ResScaleY / ResScaleX; //Courtesy of HUD Scaling Fix by Azarael ~fox
+	C.Style = ERenderStyle.STY_Alpha;
+	if ( (PawnOwner.PlayerReplicationInfo == None) || (PawnOwner.PlayerReplicationInfo.Team == None)
+		|| (PawnOwner.PlayerReplicationInfo.Team.TeamIndex == 1) )
+		C.DrawColor = HudColorBlue;
+	else
+		C.DrawColor = HudColorRed;
+
+	C.SetPos(C.ClipX - ScaleFactor - 0.0011*HUDScale*C.ClipX, (1 - 0.0975*HUDScale)*C.ClipY);
+	C.DrawTile( Material'HudContent.HUD', ScaleFactor, 0.223*ScaleFactor, 0, 110, 166, 53 );
+
+	DrawSpriteTileWidget(C, RechargeBar);
+	RechargeBar.Scale = Vehicle(PawnOwner).ChargeBar();
+	ShowReloadingPulse(RechargeBar.Scale);
+}

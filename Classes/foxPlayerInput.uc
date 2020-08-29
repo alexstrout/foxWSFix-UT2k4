@@ -260,5 +260,5 @@ defaultproperties
 	WideHUDMap(7)=(HUDClass=class'HudCDoubleDomination',WideHUD="HUDFix.HudWDoubleDomination")
 	WideHUDMap(8)=(HUDClass=class'HudCBombingRun',WideHUD="HUDFix.HudWBombingRun")
 	WideHUDMap(9)=(HUDClass=class'HudMutant',WideHUD="HUDFix.HudWMutant") */
-	WideHUDMap(0)=(HUDClass=class'HudCDeathMatch',WideHUD="foxWSFix.foxHudCDeathMatch")
+	WideHUDMap(0)=(HUDClass=class'HudCDeathMatch',WideHUD="foxWSFix.foxWideHudCDeathMatch")
 }

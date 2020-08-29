@@ -1,0 +1,25 @@
+function WideDrawAdrenaline( Canvas C )
+{
+	if ( !PlayerOwner.bAdrenalineEnabled )
+		return;
+
+	DrawSpriteTileWidget( C, AdrenalineBackground );
+	DrawSpriteTileWidget( C, AdrenalineBackgroundDisc );
+
+	if( CurEnergy == MaxEnergy )
+	{
+		DrawSpriteTileWidget( C, AdrenalineAlert );
+		AdrenalineAlert.Tints[TeamIndex] = HudColorHighLight;
+	}
+
+	DrawSpriteTileWidget( C, AdrenalineIcon );
+	DrawNumericTileWidget( C, AdrenalineCount, DigitsBig);
+
+	if(CurEnergy > LastEnergy)
+		LastAdrenalineTime = Level.TimeSeconds;
+
+	LastEnergy = CurEnergy;
+	DrawHUDAnimWidget( AdrenalineIcon, default.AdrenalineIcon.TextureScale, LastAdrenalineTime, 0.6, 0.6);
+	AdrenalineBackground.Tints[TeamIndex] = HudColorBlack;
+	AdrenalineBackground.Tints[TeamIndex].A = 150;
+}

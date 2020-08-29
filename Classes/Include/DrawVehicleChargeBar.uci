@@ -1,0 +1,5 @@
+#include Classes\Include\_Internal\DrawVehicleChargeBar.uci
+simulated function DrawVehicleChargeBar(Canvas C)
+{
+	WideDrawVehicleChargeBar(C);
+}

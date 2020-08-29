@@ -1,0 +1,19 @@
+function WideDrawUDamage( Canvas C )
+{
+	local xPawn P;
+
+	if (Vehicle(PawnOwner) != None)
+		P = xPawn(Vehicle(PawnOwner).Driver);
+	else
+		P = xPawn(PawnOwner);
+
+	if (P != None && P.UDamageTime > Level.TimeSeconds)
+	{
+		 if (P.UDamageTime > Level.TimeSeconds + 15 )
+			UDamageIcon.TextureScale = default.UDamageIcon.TextureScale * FMin((P.UDamageTime - Level.TimeSeconds)* 0.0333,1);
+
+		 DrawSpriteTileWidget(C, UDamageIcon);
+		 UDamageTime.Value = P.UDamageTime - Level.TimeSeconds ;
+		 DrawNumericTileWidget(C, UDamageTime, DigitsBig);
+	}
+}

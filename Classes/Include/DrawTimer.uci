@@ -1,0 +1,5 @@
+#include Classes\Include\_Internal\DrawTimer.uci
+simulated function DrawTimer(Canvas C)
+{
+	WideDrawTimer(C);
+}
