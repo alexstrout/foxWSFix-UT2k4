@@ -76,7 +76,7 @@ simulated function WideDrawWeaponBar(Canvas C)
 		// Keep weaponbar organized when scaled
 		//HudScaleOffset= 1-(HudScale-HudMinScale)/HudMinScale; //Removed, no longer needed ~fox
 		//BarBorder[i].PosX =  default.BarBorder[i].PosX+( BarBorderScaledPosition[i] - default.BarBorder[i].PosX) *HudScaleOffset; //Replaced w/ below line ~fox
-		BarBorder[i].PosX = 0.5 - ((0.5 - default.BarBorder[i].PosX) * ((ResScaleY * HudScale) / ResScaleX)); //Courtesy of HUD Scaling Fix by Azarael ~fox
+		BarBorder[i].PosX = 0.5 - ((0.5 - default.BarBorder[i].PosX) * HudScale * (ResScaleY/ResScaleX)); //Courtesy of HUD Scaling Fix by Azarael ~fox
 
 		BarWeaponIcon[i].PosX = BarBorder[i].PosX;
 

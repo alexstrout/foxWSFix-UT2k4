@@ -52,7 +52,7 @@ simulated function TeamAssaultWideDrawTeamVS(Canvas C)
 
 	// match up widget position voodoo magic crap...
 	//TotalScaleX = HudCanvasScale * ResScaleX * HudScale; //Replaced w/ below line ~fox
-	TotalScaleX = HudCanvasScale * ResScaleY * HudScale; //Courtesy of HUD Scaling Fix by Azarael ~fox
+	TotalScaleX = HudCanvasScale * ResScaleX * HudScale * (ResScaleY/ResScaleX); //Courtesy of HUD Scaling Fix by Azarael ~fox
 	TotalScaleY = HudCanvasScale * ResScaleY * HudScale;
 
 	TextureDX = Abs(VSBackgroundDisc.TextureCoords.X2 - VSBackgroundDisc.TextureCoords.X1 + 1.0f) * TotalScaleX * VSBackgroundDisc.TextureScale;

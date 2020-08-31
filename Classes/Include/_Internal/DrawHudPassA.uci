@@ -127,7 +127,8 @@ simulated function WideDrawHudPassA(Canvas C)
 
 				if (CurVehicleHealth > 999)
 				{
-					DigitsVehicleHealth.OffsetX = 220;
+					//DigitsVehicleHealth.OffsetX = 220; //Replaced w/ below line ~fox
+					DigitsVehicleHealth.OffsetX = 445; //Courtesy of HUD Scaling Fix by Azarael ~fox
 					DigitsVehicleHealth.OffsetY = -35;
 					DigitsVehicleHealth.TextureScale = 0.39;
 				}
