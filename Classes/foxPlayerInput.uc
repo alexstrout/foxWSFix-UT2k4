@@ -11,10 +11,18 @@ var float CachedDesiredFOV;
 
 var float CachedASTurretMinPlayerFOV;
 
-var byte CachedInventoryGroup;
-var byte CachedGroupOffset;
+struct WeaponInfo
+{
+	var class<Weapon> WeaponClass;
+	var vector DefaultPlayerViewOffset;
+	var vector DefaultEffectOffset;
+	var vector DefaultSmallViewOffset;
+	var vector DefaultSmallEffectOffset;
+};
+var WeaponInfo CachedWeaponInfo;
 
 var globalconfig float Desired43FOV;
+var globalconfig bool bCorrectZoomFOV;
 var globalconfig bool bCorrectMouseSensitivity;
 
 struct native WideHUDMapStruct
@@ -35,9 +43,6 @@ exec function SetFOV(float F)
 
 	//This will force a new weapon position / FOV calculation
 	CachedResScaleX = default.CachedResScaleX;
-
-	//... And this will correct our next FOV
-	DesiredFOV = F;
 }
 
 //fox: Hijack this to force FOV per current aspect ratio - done every frame as a lazy catch-all since we're only hooking clientside PlayerInput
@@ -62,21 +67,22 @@ event PlayerInput(float DeltaTime)
 		CachedResScaleX = myHUD.ResScaleX;
 		CachedDefaultFOV = default.CachedDefaultFOV;
 		CachedDesiredFOV = default.CachedDesiredFOV;
-		CachedInventoryGroup = default.CachedInventoryGroup;
-		CachedGroupOffset = default.CachedGroupOffset;
+		UpdateCachedWeaponInfo(None);
 		CorrectMouseSensitivity();
 		return;
 	}
 
 	//Attempt to set an accurate FOV for our aspect ratio
 	if (DefaultFOV != CachedDefaultFOV) {
-		CachedDefaultFOV = GetHorPlusFOVClamped(Desired43FOV);
+		CachedDefaultFOV = GetHorPlusFOV(Desired43FOV);
 		DefaultFOV = CachedDefaultFOV;
+		DesiredFOV = CachedDefaultFOV;
 		return;
 	}
 
 	//Actually set this FOV, including when we're zoomed
-	if (DesiredFOV != DefaultFOV
+	if (bCorrectZoomFOV
+	&& DesiredFOV != DefaultFOV
 	&& DesiredFOV != CachedDesiredFOV) {
 		//Special exception for ASTurrets, due to how they handle zooming
 		if (ASTurret(Pawn) != None) {
@@ -92,17 +98,14 @@ event PlayerInput(float DeltaTime)
 	}
 
 	//Oh no! Work around weapon respawn bug where position isn't set correctly on respawn
-	if (Pawn == None || Level.TimeSeconds - Pawn.SpawnTime < 0.5) {
-		CachedInventoryGroup = default.CachedInventoryGroup;
-		CachedGroupOffset = default.CachedGroupOffset;
-		//Bit of a hack, just allow Weapon to process every tick during respawn to minimize "pop"
-		//return;
+	if (Pawn == None || Pawn.Weapon == None) {
+		UpdateCachedWeaponInfo(None);
+		return;
 	}
 
 	//Set weapon FOV as well - only need to do once per weapon switch
 	//Note: We can't cache / compare the weapon due to memory fault, but we can cache / compare the FOV
-	if (Pawn != None && Pawn.Weapon != None
-	&& (Pawn.Weapon.InventoryGroup != CachedInventoryGroup || Pawn.Weapon.GroupOffset != CachedGroupOffset))
+	if (Pawn.Weapon.Class != CachedWeaponInfo.WeaponClass)
 		ApplyWeaponFOV(Pawn.Weapon);
 }
 function FixASTurretFOV(ASTurret V)
@@ -114,32 +117,38 @@ function FixASTurretFOV(ASTurret V)
 }
 function ApplyWeaponFOV(Weapon Weap)
 {
-	//First set the new FOV...
+	local float ScaleFactor;
+
+	//First reset/save our "default default" values before doing anything else
+	UpdateCachedWeaponInfo(Weap);
+
+	//Set the new FOV
 	Weap.DisplayFOV = GetHorPlusFOV(Weap.default.DisplayFOV);
 
-	//And remember our selected weapon
-	CachedInventoryGroup = Weap.InventoryGroup;
-	CachedGroupOffset = Weap.GroupOffset;
-
 	//Fix bad DisplayFOV calculation in Pawn.CalcDrawOffset()
-	//PlayerViewOffset is unfortunately set every Weapon.RenderOverlays() call - so hijack SmallViewOffset!
-	if (bSmallWeapons) {
-		if (Weap.default.SmallEffectOffset != vect(0,0,0))
-			Weap.SmallEffectOffset = Weap.default.SmallEffectOffset;
-		else
-			Weap.SmallEffectOffset = Weap.default.EffectOffset
-				+ Weap.default.PlayerViewOffset - Weap.default.SmallViewOffset;
-		if (Weap.default.SmallViewOffset != vect(0,0,0))
-			Weap.SmallViewOffset = Weap.default.SmallViewOffset;
-		else
-			Weap.SmallViewOffset = Weap.default.PlayerViewOffset;
+	ScaleFactor = Weap.DisplayFOV / Weap.default.DisplayFOV;
+	Weap.default.PlayerViewOffset *= ScaleFactor;
+	Weap.default.EffectOffset *= ScaleFactor;
+	Weap.default.SmallViewOffset *= ScaleFactor;
+	Weap.default.SmallEffectOffset *= ScaleFactor;
+}
+function UpdateCachedWeaponInfo(Weapon Weap)
+{
+	if (CachedWeaponInfo.WeaponClass != None) {
+		CachedWeaponInfo.WeaponClass.default.PlayerViewOffset = CachedWeaponInfo.DefaultPlayerViewOffset;
+		CachedWeaponInfo.WeaponClass.default.EffectOffset = CachedWeaponInfo.DefaultEffectOffset;
+		CachedWeaponInfo.WeaponClass.default.SmallViewOffset = CachedWeaponInfo.DefaultSmallViewOffset;
+		CachedWeaponInfo.WeaponClass.default.SmallEffectOffset = CachedWeaponInfo.DefaultSmallEffectOffset;
 	}
+	if (Weap == None)
+		CachedWeaponInfo.WeaponClass = None;
 	else {
-		Weap.SmallEffectOffset = Weap.default.EffectOffset;
-		Weap.SmallViewOffset = Weap.default.PlayerViewOffset;
+		CachedWeaponInfo.WeaponClass = Weap.Class;
+		CachedWeaponInfo.DefaultPlayerViewOffset = Weap.default.PlayerViewOffset;
+		CachedWeaponInfo.DefaultEffectOffset = Weap.default.EffectOffset;
+		CachedWeaponInfo.DefaultSmallViewOffset = Weap.default.SmallViewOffset;
+		CachedWeaponInfo.DefaultSmallEffectOffset = Weap.default.SmallEffectOffset;
 	}
-	Weap.SmallViewOffset *= Weap.DisplayFOV / Weap.default.DisplayFOV;
-	class'PlayerController'.default.bSmallWeapons = true; //Must set specifically this for Weapon.RenderOverlays()
 }
 
 //fox: Attempt to dynamically load widescreen HUD
@@ -179,11 +188,7 @@ function float vFOV(float BaseFOV, float AspectRatio)
 //fox: Use screen aspect ratio to auto-generate a Hor+ FOV
 function float GetHorPlusFOV(float BaseFOV)
 {
-	return RADTODEG * hFOV(vFOV(BaseFOV * DEGTORAD, 4/3f), (myHUD.ResScaleX * 4) / (myHUD.ResScaleY * 3));
-}
-function float GetHorPlusFOVClamped(float BaseFOV)
-{
-	return FClamp(GetHorPlusFOV(BaseFOV), 1, 170);
+	return FClamp(RADTODEG * hFOV(vFOV(BaseFOV * DEGTORAD, 4/3f), (myHUD.ResScaleX * 4) / (myHUD.ResScaleY * 3)), 1, 170);
 }
 
 //fox: Match mouse sensitivity to 90 FOV sensitivity, allowing it to be independent of our aspect ratio
@@ -192,7 +197,7 @@ function CorrectMouseSensitivity()
 	if (!bCorrectMouseSensitivity)
 		return;
 	MouseSensitivity = class'PlayerInput'.default.MouseSensitivity
-		/ (GetHorPlusFOVClamped(Desired43FOV) * 0.01111); //"Undo" PlayerInput FOVScale
+		/ (GetHorPlusFOV(Desired43FOV) * 0.01111); //"Undo" PlayerInput FOVScale
 }
 
 //fox: Fix options menu not saving
@@ -243,9 +248,8 @@ function InvertMouse(optional string Invert)
 defaultproperties
 {
 	bDoInit=true
-	CachedInventoryGroup=255
-	CachedGroupOffset=255
 	Desired43FOV=90f
+	bCorrectZoomFOV=true
 	bCorrectMouseSensitivity=true
 	WideHUDMap(0)=(HUDClass=class'HUD_Assault',WideHUD="foxWSFix.foxWideHUD_Assault")
 	WideHUDMap(1)=(HUDClass=class'HudCBombingRun',WideHUD="foxWSFix.foxWideHudCBombingRun")
