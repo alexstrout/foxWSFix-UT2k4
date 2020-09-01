@@ -3,11 +3,8 @@ class foxUT2K4Tab_PlayerSettings extends UT2K4Tab_PlayerSettings;
 //fox: Don't populate our widescreen-adjusted FOV in this menu (this will be corrected in-game after)
 function InternalOnLoadINI(GUIComponent Sender, string s)
 {
-	local PlayerController PC;
-
 	Super.InternalOnLoadINI(Sender, s);
 
-	PC = PlayerOwner();
 	switch (GUIMenuOption(Sender)) {
 		case nu_FOV:
 			//iFOV = PC.DefaultFOV; //This is our current wide FOV
@@ -28,8 +25,8 @@ function SaveSettings()
 
 	PC = PlayerOwner();
 	PC.ConsoleCommand("SetFOV" @ iFOV);
-}
 
-defaultproperties
-{
+	//Also explicitly save value in case we're not in-game
+	class'foxPlayerInput'.default.Desired43FOV = iFOV;
+	class'foxPlayerInput'.static.StaticSaveConfig();
 }

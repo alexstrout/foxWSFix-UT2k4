@@ -22,6 +22,7 @@ struct WeaponInfo
 var WeaponInfo CachedWeaponInfo;
 
 var globalconfig float Desired43FOV;
+var globalconfig float Desired43MouseSensitivity;
 var globalconfig bool bCorrectZoomFOV;
 var globalconfig bool bCorrectMouseSensitivity;
 
@@ -196,8 +197,10 @@ function CorrectMouseSensitivity()
 {
 	if (!bCorrectMouseSensitivity)
 		return;
-	MouseSensitivity = class'PlayerInput'.default.MouseSensitivity
-		/ (GetHorPlusFOV(Desired43FOV) * 0.01111); //"Undo" PlayerInput FOVScale
+	if (Desired43MouseSensitivity == -1f)
+		Desired43MouseSensitivity = class'PlayerInput'.default.MouseSensitivity;
+	MouseSensitivity = Desired43MouseSensitivity
+		/ (GetHorPlusFOV(90f) * 0.01111); //"Undo" PlayerInput FOVScale
 }
 
 //fox: Fix options menu not saving
@@ -214,6 +217,9 @@ function UpdateSensitivity(float F)
 	class'PlayerInput'.default.MouseSensitivity = MouseSensitivity;
 	class'PlayerInput'.static.StaticSaveConfig();
 	foxPlayerInputApplyDoubleClickTime();
+
+	Desired43MouseSensitivity = F;
+	SaveConfig();
 	CorrectMouseSensitivity();
 }
 function UpdateAccel(float F)
@@ -249,6 +255,7 @@ defaultproperties
 {
 	bDoInit=true
 	Desired43FOV=90f
+	Desired43MouseSensitivity=-1f
 	bCorrectZoomFOV=true
 	bCorrectMouseSensitivity=true
 	WideHUDMap(0)=(HUDClass=class'HUD_Assault',WideHUD="foxWSFix.foxWideHUD_Assault")
