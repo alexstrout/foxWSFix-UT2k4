@@ -20,15 +20,12 @@ function InternalOnLoadINI(GUIComponent Sender, string s)
 //fox: Fix DoubleClickTime not applying in-game via special ConsoleCommand
 function SaveSettings()
 {
-	local PlayerController PC;
-
 	Super.SaveSettings();
 
-	PC = PlayerOwner();
-	PC.ConsoleCommand("SetSensitivity" @ fSens);
-	PC.ConsoleCommand("foxPlayerInputApplyDoubleClickTime");
+	//Work around our double-click time not being applied in-game
+	PlayerOwner().ConsoleCommand("foxPlayerInputApplyDoubleClickTime");
 
-	//Also explicitly save value in case we're not in-game
+	//Also explicitly save value in case we're not in-game and foxPlayerInput isn't set for Engine.PlayerController
 	class'foxPlayerInput'.default.Desired43MouseSensitivity = fSens;
 	class'foxPlayerInput'.static.StaticSaveConfig();
 }

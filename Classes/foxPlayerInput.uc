@@ -22,9 +22,9 @@ struct WeaponInfo
 var WeaponInfo CachedWeaponInfo;
 
 var globalconfig float Desired43FOV;
-var globalconfig float Desired43MouseSensitivity;
 var globalconfig bool bCorrectZoomFOV;
 var globalconfig bool bCorrectMouseSensitivity;
+var globalconfig float Desired43MouseSensitivity;
 
 struct native WideHUDMapStruct
 {
@@ -81,7 +81,7 @@ event PlayerInput(float DeltaTime)
 		return;
 	}
 
-	//Actually set this FOV, including when we're zoomed
+	//Attempt to do the same when we're zoomed in or out
 	if (bCorrectZoomFOV
 	&& DesiredFOV != DefaultFOV
 	&& DesiredFOV != CachedDesiredFOV) {
@@ -104,8 +104,7 @@ event PlayerInput(float DeltaTime)
 		return;
 	}
 
-	//Set weapon FOV as well - only need to do once per weapon switch
-	//Note: We can't cache / compare the weapon due to memory fault, but we can cache / compare the FOV
+	//Set weapon FOV as well - only once per weapon
 	if (Pawn.Weapon.Class != CachedWeaponInfo.WeaponClass)
 		ApplyWeaponFOV(Pawn.Weapon);
 }
@@ -120,7 +119,7 @@ function ApplyWeaponFOV(Weapon Weap)
 {
 	local float ScaleFactor;
 
-	//First reset/save our "default default" values before doing anything else
+	//First reset our "default default" values before doing anything else
 	UpdateCachedWeaponInfo(Weap);
 
 	//Set the new FOV
@@ -197,7 +196,7 @@ function CorrectMouseSensitivity()
 {
 	if (!bCorrectMouseSensitivity)
 		return;
-	if (Desired43MouseSensitivity == -1f)
+	if (Desired43MouseSensitivity <= 0f)
 		Desired43MouseSensitivity = class'PlayerInput'.default.MouseSensitivity;
 	MouseSensitivity = Desired43MouseSensitivity
 		/ (GetHorPlusFOV(90f) * 0.01111); //"Undo" PlayerInput FOVScale
@@ -255,9 +254,9 @@ defaultproperties
 {
 	bDoInit=true
 	Desired43FOV=90f
-	Desired43MouseSensitivity=-1f
 	bCorrectZoomFOV=true
 	bCorrectMouseSensitivity=true
+	Desired43MouseSensitivity=-1f
 	WideHUDMap(0)=(HUDClass=class'HUD_Assault',WideHUD="foxWSFix.foxWideHUD_Assault")
 	WideHUDMap(1)=(HUDClass=class'HudCBombingRun',WideHUD="foxWSFix.foxWideHudCBombingRun")
 	WideHUDMap(2)=(HUDClass=class'HudCCaptureTheFlag',WideHUD="foxWSFix.foxWideHudCCaptureTheFlag")

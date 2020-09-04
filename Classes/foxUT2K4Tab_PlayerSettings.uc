@@ -19,14 +19,12 @@ function InternalOnLoadINI(GUIComponent Sender, string s)
 //This keeps us from ending up with wild FOVs or non-corrected weapons (e.g. Sniper Rifle clipping)
 function SaveSettings()
 {
-	local PlayerController PC;
-
 	Super.SaveSettings();
 
-	PC = PlayerOwner();
-	PC.ConsoleCommand("SetFOV" @ iFOV);
+	//Set our "desired" 4:3 FOV via SetFOV
+	PlayerOwner().ConsoleCommand("SetFOV" @ iFOV);
 
-	//Also explicitly save value in case we're not in-game
+	//Also explicitly save value in case we're not in-game and foxPlayerInput isn't set for Engine.PlayerController
 	class'foxPlayerInput'.default.Desired43FOV = iFOV;
 	class'foxPlayerInput'.static.StaticSaveConfig();
 }
