@@ -9,35 +9,27 @@ https://forums.epicgames.com/threads/971852-HUD-Scaling-Fix-%28RC3%29
  Features
 ==========
 -- Widescreen FOV support based on aspect ratio and in-game FOV setting, including vehicles and weapon zoom
--- Widescreen HUD support with aspect-correct rendering, based on Azarael's HUD Scaling Fix Mutator
+-- Widescreen HUD support with aspect-correct rendering, based on Azarael's HUD Scaling Fix mutator
 -- Aspect-correct rendering for first-person weapons
 -- Entirely client-side - no mutators required
 
 =====================
  Install / Uninstall
 =====================
-First, navigate to the System folder and open up User.ini (e.g. "C:\Games\UT2004\System\User.ini"), making backups first if desired.
-Find the following section:
-
-	[XGame.xPlayer]
-
-Under this section, find the following line:
+First, navigate to the System folder and open up User.ini (e.g. "C:\Games\UT2004\System\User.ini")
+Find the following line:
 
 	InputClass=Class'Engine.PlayerInput'
 
-And replace it with the following: (";" denotes a comment and comments out the default line so it is not read by UT)
+And replace every instance of it with the following:
 
 	;InputClass=Class'Engine.PlayerInput'
 	InputClass=Class'foxWSFix.foxPlayerInput'
 
-Note that there are several InputClass definitions - be sure to change this for [XGame.xPlayer] only!
+(Note: This line appears multiple times in User.ini - be sure to change each one!)
 
 Next, open up ut2004.ini (e.g. "C:\Games\UT2004\System\ut2004.ini")
-Find the following section:
-
-	[Engine.Engine]
-
-Under this section, find the following line:
+Find the following line:
 
 	GUIController=GUI2K4.UT2K4GUIController
 
@@ -46,7 +38,7 @@ And replace it with the following:
 	;GUIController=GUI2K4.UT2K4GUIController
 	GUIController=foxWSFix.foxUT2K4GUIController
 
-To uninstall, simply reverse your changes.
+You're done! To uninstall, simply reverse your changes.
 
 =======
  Usage
