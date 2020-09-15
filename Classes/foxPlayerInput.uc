@@ -154,25 +154,21 @@ function UpdateCachedWeaponInfo(Weapon Weap)
 //fox: Attempt to dynamically load widescreen HUD
 function LoadWideHUD()
 {
-	local string WideHUDType;
 	local class<HUD> HudClass;
 	local int i;
 
 	for (i = 0; i < WideHUDMap.Length; i++) {
 		if (myHUD.Class == WideHUDMap[i].HUDClass) {
-			WideHUDType = WideHUDMap[i].WideHUD;
-			break;
+			HudClass = class<HUD>(DynamicLoadObject(WideHUDMap[i].WideHUD, class'Class'));
+			if (HudClass != None) {
+				Log("foxWSFix: foxPlayerInput replaced " $ myHUD.Class $ " with " $ HudClass);
+				ClientSetHUD(HudClass, myHUD.ScoreBoard.Class);
+				return;
+			}
+			Log("foxWSFix: foxPlayerInput tried to replace " $ myHUD.Class $ " with " $ WideHUDMap[i].WideHUD $ " but couldn't load class! Skipping...");
 		}
 	}
-	if (WideHUDType != "") {
-		HudClass = class<HUD>(DynamicLoadObject(WideHUDType, class'Class'));
-		if (HudClass != None) {
-			Log("foxWSFix: foxPlayerInput replaced " $ myHUD.Class $ " with " $ HudClass);
-			ClientSetHUD(HudClass, myHUD.ScoreBoard.Class);
-			return;
-		}
-		Log("foxWSFix: foxPlayerInput no replacement specified for " $ myHUD.Class);
-	}
+	Log("foxWSFix: foxPlayerInput no replacement specified for " $ myHUD.Class);
 }
 
 //fox: Convert vFOV to hFOV (and vice versa)
