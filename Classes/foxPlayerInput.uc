@@ -131,6 +131,13 @@ function ApplyWeaponFOV(Weapon Weap)
 	Weap.default.EffectOffset *= ScaleFactor;
 	Weap.default.SmallViewOffset *= ScaleFactor;
 	Weap.default.SmallEffectOffset *= ScaleFactor;
+
+	//Must set OldMesh's values directly (if applicable)
+	if (Weap.bUseOldWeaponMesh) {
+		Weap.OldPlayerViewOffset = Weap.default.OldPlayerViewOffset * ScaleFactor;
+		Weap.OldSmallViewOffset = Weap.default.OldSmallViewOffset * ScaleFactor;
+		Weap.bInitOldMesh = true; //Force a ViewOffset update
+	}
 }
 function UpdateCachedWeaponInfo(Weapon Weap)
 {
