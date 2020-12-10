@@ -120,7 +120,7 @@ And of course, thanks for trying the mod!
 
 Changes
 -------
-v2.0.0 (???):
+v2.0.0 (2020-12-10):
 * Configurable client-side HUD loading, no mutator required
 * Integration / reimplementation of Azarael's HUD Scaling Fix HUDs, fixing a few minor bugs (such as Adrenaline meter not scaling in CTF)
 * Automatic aspect ratio determination (SetRatio removed, no longer needed)
@@ -128,12 +128,12 @@ v2.0.0 (???):
 * Fixed issue where input settings weren't saved when adjusted in-game
 * Mouse sensitivity now auto-adjusts to be consistent across aspect ratios
 
-v1.1.1 (10/07/15):
+v1.1.1 (2015-10-07):
 * Fixed optimization-related general protection fault
 
-v1.1.0 (10/07/15):
+v1.1.0 (2015-10-07):
 * Optimizations to avoid recalculating view FOV and weapon FOV every frame (oops!)
 * Don't use FOV function as that calls SaveConfig every run, leading to performance issues (oops!)
 
-v1.0.0 (04/03/15):
+v1.0.0 (2015-04-03):
 * Initial release.
