@@ -1,4 +1,4 @@
-foxWSFix v2.0.0
+foxWSFix v2.1.0
 ===============
 Improved widescreen support for Unreal Tournament 2004
 
@@ -23,18 +23,16 @@ Replace every instance of it with the following:
     ;InputClass=Class'Engine.PlayerInput'
     InputClass=Class'foxWSFix.foxPlayerInput'
 
-(Note: This line appears multiple times - be sure to change each one!)
-
-Next, open System\ut2004.ini and find the following line:
-
-    GUIController=GUI2K4.UT2K4GUIController
-
-Replace it with the following:
-
-    ;GUIController=GUI2K4.UT2K4GUIController
-    GUIController=foxWSFix.foxUT2K4GUIController
+(Note: This line may appear multiple times - be sure to change each one if so!)
 
 You're done! To uninstall, simply reverse your changes.
+
+    ** v2.0 Upgrade Note **
+    If upgrading from v2.0, you should revert v2.0's GUIController change.
+    Open System\ut2004.ini and replace:
+        GUIController=foxWSFix.foxUT2K4GUIController
+    With the original:
+        GUIController=GUI2K4.UT2K4GUIController
 
 Usage
 -----
@@ -120,8 +118,14 @@ And of course, thanks for trying the mod!
 
 Changes
 -------
+v2.1.0 (???):
+* (WIP) Resolved AntiTCC issue with GUIController hook? (see "v2.0 Upgrade Note" above)
+  * (Note: All functionality is still in place, just handled in foxPlayerInput now)
+
 v2.0.0 (2020-12-10):
 * Configurable client-side HUD loading, no mutator required
+* Fixed various issues with first-person weapon rendering
+  * (Note: Omitted by accident from original v2.0 patch notes, oops)
 * Integration / reimplementation of Azarael's HUD Scaling Fix HUDs, fixing a few minor bugs (such as Adrenaline meter not scaling in CTF)
 * Automatic aspect ratio determination (SetRatio removed, no longer needed)
 * FOV adjustment now applies to weapon zoom etc. and is driven by menu FOV setting (or SetFOV as before)
