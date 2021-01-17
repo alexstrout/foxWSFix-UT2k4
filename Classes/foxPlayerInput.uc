@@ -58,6 +58,10 @@ event PlayerInput(float DeltaTime)
 		//Write settings to ini if first run
 		SaveConfig();
 
+		//Just hook our custom UT2K4SettingsPage tabs here
+		class'UT2K4SettingsPage'.default.PanelClass[2] = "foxWSFix.foxUT2K4Tab_PlayerSettings";
+		class'UT2K4SettingsPage'.default.PanelClass[4] = "foxWSFix.foxUT2K4Tab_IForceSettings";
+
 		//Attempt to load widescreen HUDs (if not already done)
 		LoadWideHUD();
 		return;
