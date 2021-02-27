@@ -118,8 +118,8 @@ And of course, thanks for trying the mod!
 
 Changes
 -------
-v2.1.0 (???):
-* (WIP) Resolved AntiTCC issue with GUIController hook? (see "v2.0 Upgrade Note" above)
+v2.1.0 (2020-02-27):
+* Resolved AntiTCC issue with GUIController hook (see "v2.0 Upgrade Note" above)
   * (Note: All functionality is still in place, just handled in foxPlayerInput now)
 
 v2.0.0 (2020-12-10):
