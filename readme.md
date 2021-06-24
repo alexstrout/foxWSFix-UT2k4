@@ -2,6 +2,8 @@ foxWSFix v2.1.1
 ===============
 Improved widescreen support for Unreal Tournament 2004
 
+![Mini-Wide Window!](Media/Shot00005.jpg)
+
 Features
 --------
 * Aspect-correct "Hor+" FOV adjustment, including vehicle and weapon zoom values
