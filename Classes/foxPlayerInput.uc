@@ -4,6 +4,7 @@ class foxPlayerInput extends PlayerInput within PlayerController
 	transient;
 
 var bool bDoInit;
+var bool bDoErrorInit;
 
 var float CachedResScaleX;
 var float CachedDefaultFOV;
@@ -21,6 +22,7 @@ struct WeaponInfo
 };
 var WeaponInfo CachedWeaponInfo;
 
+var globalconfig bool bInputClassErrorCheck;
 var globalconfig float Desired43FOV;
 var globalconfig bool bCorrectZoomFOV;
 var globalconfig bool bCorrectMouseSensitivity;
@@ -46,6 +48,23 @@ exec function SetFOV(float F)
 	CachedResScaleX = default.CachedResScaleX;
 }
 
+//fox: Check various PlayerController classes for correct InputClass (and possibly just add it if missing)
+function CheckControllerInputClass(class<PlayerController> ControllerClass, string FriendlyName)
+{
+	if (ControllerClass.default.InputClass != class'foxPlayerInput') {
+		ClientMessage("foxWSFix: " $ FriendlyName $ " InputClass is: " $ ControllerClass.default.InputClass);
+
+		//Just add InputClass if missing
+		if (ControllerClass.default.InputClass == None) {
+			ClientMessage("foxWSFix: Attempting to add missing InputClass line...");
+			ControllerClass.default.InputClass = class'foxPlayerInput';
+			ControllerClass.static.StaticSaveConfig();
+			ClientMessage("foxWSFix: " $ FriendlyName $ " InputClass is now: " $ ControllerClass.default.InputClass);
+		}
+		ClientMessage("foxWSFix: Please verify User.ini settings!");
+	}
+}
+
 //fox: Hijack this to force FOV per current aspect ratio - done every frame as a lazy catch-all since we're only hooking clientside PlayerInput
 event PlayerInput(float DeltaTime)
 {
@@ -54,6 +73,24 @@ event PlayerInput(float DeltaTime)
 	//Do initialization stuff here, since we don't have init events
 	if (bDoInit) {
 		bDoInit = false;
+
+		//Check for errors if requested
+		if (bInputClassErrorCheck
+		&& (class'PlayerController'.default.InputClass != class'foxPlayerInput' || class'xPlayer'.default.InputClass != class'foxPlayerInput')) {
+			if (bDoErrorInit && Level.TimeSeconds > 3f) {
+				bDoErrorInit = false;
+				ClientMessage("foxWSFix Warning: One or more errors occurred. To skip this error check, set bInputClassErrorCheck=false in User.ini");
+				CheckControllerInputClass(class'PlayerController', "[Engine.PlayerController]");
+				CheckControllerInputClass(class'xPlayer', "[XGame.xPlayer]");
+
+				//Write settings to ini once if stuck on errors
+				SaveConfig();
+			}
+
+			//Just bail here, resetting bDoInit so we don't do our normal hooks
+			bDoInit = true;
+			return;
+		}
 
 		//Write settings to ini if first run
 		SaveConfig();
@@ -260,6 +297,8 @@ function InvertMouse(optional string Invert)
 defaultproperties
 {
 	bDoInit=true
+	bDoErrorInit=true
+	bInputClassErrorCheck=true
 	Desired43FOV=90f
 	bCorrectZoomFOV=true
 	bCorrectMouseSensitivity=true

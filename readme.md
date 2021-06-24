@@ -1,4 +1,4 @@
-foxWSFix v2.1.0
+foxWSFix v2.1.1
 ===============
 Improved widescreen support for Unreal Tournament 2004
 
@@ -7,7 +7,7 @@ Features
 * Aspect-correct "Hor+" FOV adjustment, including vehicle and weapon zoom values
 * Aspect-correct rendering for first-person weapons
 * Aspect-correct HUD support (mostly), based on Azarael's HUD Scaling Fix mutator
-* Aspect-correct mouse sensitivity (auto-adjusts on resolution change)
+* Aspect-correct mouse sensitivity (scale off wider FOV instead of hard-coded 90)
 * Entirely client-side - no mutators required
 
 Install / Uninstall
@@ -23,7 +23,8 @@ Replace every instance of it with the following:
     ;InputClass=Class'Engine.PlayerInput'
     InputClass=Class'foxWSFix.foxPlayerInput'
 
-(Note: This line may appear multiple times - be sure to change each one if so!)
+**Note:** This line should appear *at least twice* - once under `[Engine.PlayerController]`, and
+once under `[XGame.xPlayer]`. Be sure to change each one! (or add it if missing)
 
 You're done! To uninstall, simply reverse your changes.
 
@@ -60,9 +61,10 @@ However, widescreen HUDs are provided for vanilla HUDs only.
 foxWSFix stores its settings in System\User.ini as such:
 
     [foxWSFix.foxPlayerInput]
+    bInputClassErrorCheck=True      ;Check User.ini InputClass settings for possible errors?
     Desired43FOV=90.000000          ;Desired 4:3 FOV per SetFOV command / menu setting
     bCorrectZoomFOV=True            ;Correct FOV values for weapon zoom?
-    bCorrectMouseSensitivity=True   ;Correct MouseSensitivity for aspect ratio changes?
+    bCorrectMouseSensitivity=True   ;Correct MouseSensitivity for aspect ratio changes? (due to wider FOV)
     Desired43MouseSensitivity=2.200000 ;Desired 4:3 MouseSensitivity per SetSensitivity command / menu setting
     WideHUDMap=(HudClass=Class'UT2k4Assault.HUD_Assault',WideHUD="foxWSFix.foxWideHUD_Assault")
     WideHUDMap=(HudClass=Class'XInterface.HudCBombingRun',WideHUD="foxWSFix.foxWideHudCBombingRun")
@@ -118,6 +120,11 @@ And of course, thanks for trying the mod!
 
 Changes
 -------
+v2.1.1 (2020-06-24):
+* Added in-game InputClass error handling to hopefully ease some install issues
+* Updated installation instructions to reflect the above
+* Clarified bCorrectMouseSensitivity (Unreal normally scales sensitivity against a hard-coded 90 FOV for zoom)
+
 v2.1.0 (2020-02-27):
 * Resolved AntiTCC issue with GUIController hook (see "v2.0 Upgrade Note" above)
   * (Note: All functionality is still in place, just handled in foxPlayerInput now)
