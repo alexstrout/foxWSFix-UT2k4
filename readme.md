@@ -1,4 +1,4 @@
-foxWSFix v2.1.1
+foxWSFix v2.1.2
 ===============
 Improved widescreen support for Unreal Tournament 2004
 
@@ -122,6 +122,10 @@ And of course, thanks for trying the mod!
 
 Changes
 -------
+v2.1.2 (2020-06-26):
+* Fixed weapon rendering getting increasingly offset every level transition
+  * (Note: Not applicable to foxWSFix99 for UT99, no fix needed there)
+
 v2.1.1 (2020-06-24):
 * Added in-game InputClass error handling to hopefully ease some install issues
 * Updated installation instructions to reflect the above
