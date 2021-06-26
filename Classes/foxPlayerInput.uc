@@ -28,7 +28,7 @@ var globalconfig bool bCorrectZoomFOV;
 var globalconfig bool bCorrectMouseSensitivity;
 var globalconfig float Desired43MouseSensitivity;
 
-struct native WideHUDMapStruct
+struct WideHUDMapStruct
 {
 	var class HUDClass;
 	var string WideHUD;
@@ -140,7 +140,8 @@ event PlayerInput(float DeltaTime)
 	}
 
 	//Oh no! Work around weapon respawn bug where position isn't set correctly on respawn
-	if (Pawn == None || Pawn.Weapon == None) {
+	//Also work around losing CachedWeaponInfo on ServerTravel, due to getting recreated
+	if (Pawn == None || Pawn.Weapon == None || Level.bLevelChange) {
 		UpdateCachedWeaponInfo(None);
 		return;
 	}
@@ -183,6 +184,7 @@ function ApplyWeaponFOV(Weapon Weap)
 function UpdateCachedWeaponInfo(Weapon Weap)
 {
 	if (CachedWeaponInfo.WeaponClass != None) {
+		//ClientMessage("UpdateCachedWeaponInfo from " $ CachedWeaponInfo.WeaponClass @ CachedWeaponInfo.WeaponClass.default.PlayerViewOffset);
 		CachedWeaponInfo.WeaponClass.default.PlayerViewOffset = CachedWeaponInfo.DefaultPlayerViewOffset;
 		CachedWeaponInfo.WeaponClass.default.EffectOffset = CachedWeaponInfo.DefaultEffectOffset;
 		CachedWeaponInfo.WeaponClass.default.SmallViewOffset = CachedWeaponInfo.DefaultSmallViewOffset;
@@ -191,6 +193,7 @@ function UpdateCachedWeaponInfo(Weapon Weap)
 	if (Weap == None)
 		CachedWeaponInfo.WeaponClass = None;
 	else {
+		//ClientMessage("UpdateCachedWeaponInfo to " $ Weap.Class @ Weap.default.PlayerViewOffset);
 		CachedWeaponInfo.WeaponClass = Weap.Class;
 		CachedWeaponInfo.DefaultPlayerViewOffset = Weap.default.PlayerViewOffset;
 		CachedWeaponInfo.DefaultEffectOffset = Weap.default.EffectOffset;
