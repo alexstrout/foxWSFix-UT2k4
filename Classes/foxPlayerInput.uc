@@ -27,6 +27,7 @@ var globalconfig float Desired43FOV;
 var globalconfig bool bCorrectZoomFOV;
 var globalconfig bool bCorrectMouseSensitivity;
 var globalconfig float Desired43MouseSensitivity;
+var globalconfig bool bCorrectWeaponFOV;
 
 struct WideHUDMapStruct
 {
@@ -160,6 +161,8 @@ function ApplyWeaponFOV(Weapon Weap)
 {
 	local float ScaleFactor;
 
+	if (default.bCorrectWeaponFOV)
+	{
 	//First reset our "default default" values before doing anything else
 	UpdateCachedWeaponInfo(Weap);
 
@@ -179,6 +182,13 @@ function ApplyWeaponFOV(Weapon Weap)
 		Weap.OldSmallViewOffset = Weap.default.OldSmallViewOffset * ScaleFactor;
 		Weap.bInitOldMesh = true; //Force a ViewOffset update
 	}
+}	
+	
+	else
+	{
+		return;
+	}
+
 }
 function UpdateCachedWeaponInfo(Weapon Weap)
 {
@@ -305,6 +315,7 @@ defaultproperties
 	Desired43FOV=90f
 	bCorrectZoomFOV=true
 	bCorrectMouseSensitivity=true
+	bCorrectWeaponFOV=True
 	Desired43MouseSensitivity=-1f
 	WideHUDMap(0)=(HUDClass=class'HUD_Assault',WideHUD="foxWSFix.foxWideHUD_Assault")
 	WideHUDMap(1)=(HUDClass=class'HudCBombingRun',WideHUD="foxWSFix.foxWideHudCBombingRun")
