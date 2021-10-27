@@ -140,8 +140,7 @@ event PlayerInput(float DeltaTime)
 	}
 
 	//Oh no! Work around weapon respawn bug where position isn't set correctly on respawn
-	//Also work around losing CachedWeaponInfo on ServerTravel, due to getting recreated
-	if (Pawn == None || Pawn.Weapon == None || Level.bLevelChange) {
+	if (Pawn == None || Pawn.Weapon == None) {
 		UpdateCachedWeaponInfo(None);
 		return;
 	}
@@ -200,6 +199,7 @@ function UpdateCachedWeaponInfo(Weapon Weap)
 		CachedWeaponInfo.DefaultSmallViewOffset = Weap.default.SmallViewOffset;
 		CachedWeaponInfo.DefaultSmallEffectOffset = Weap.default.SmallEffectOffset;
 	}
+	default.CachedWeaponInfo = CachedWeaponInfo; //Persist across levels (as we're destroyed on transition)
 }
 
 //fox: Attempt to dynamically load widescreen HUD
