@@ -161,12 +161,13 @@ function ApplyWeaponFOV(Weapon Weap)
 {
 	local float ScaleFactor;
 
-	//Abort if we don't want to correct visual weapon FOV
-	if (!bCorrectWeaponFOV)
-		return;
-
 	//First reset our "default default" values before doing anything else
 	UpdateCachedWeaponInfo(Weap);
+
+	//Abort if we don't want to correct visual weapon FOV
+	//We still UpdateCachedWeaponInfo though, to save calling this function every frame
+	if (!bCorrectWeaponFOV)
+		return;
 
 	//Set the new FOV
 	Weap.DisplayFOV = GetHorPlusFOV(Weap.default.DisplayFOV);
@@ -309,7 +310,7 @@ defaultproperties
 	bInputClassErrorCheck=true
 	Desired43FOV=90f
 	bCorrectZoomFOV=true
-	bCorrectWeaponFOV=True	
+	bCorrectWeaponFOV=True
 	bCorrectMouseSensitivity=true
 	Desired43MouseSensitivity=-1f
 	WideHUDMap(0)=(HUDClass=class'HUD_Assault',WideHUD="foxWSFix.foxWideHUD_Assault")
