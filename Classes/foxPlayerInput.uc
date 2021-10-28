@@ -161,8 +161,10 @@ function ApplyWeaponFOV(Weapon Weap)
 {
 	local float ScaleFactor;
 
-	if (default.bCorrectWeaponFOV)
-	{
+	//Abort if we don't want to correct visual weapon FOV
+	if (!bCorrectWeaponFOV)
+		return;
+
 	//First reset our "default default" values before doing anything else
 	UpdateCachedWeaponInfo(Weap);
 
