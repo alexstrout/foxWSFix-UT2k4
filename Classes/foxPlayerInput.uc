@@ -25,9 +25,9 @@ var WeaponInfo CachedWeaponInfo;
 var globalconfig bool bInputClassErrorCheck;
 var globalconfig float Desired43FOV;
 var globalconfig bool bCorrectZoomFOV;
+var globalconfig bool bCorrectWeaponFOV;
 var globalconfig bool bCorrectMouseSensitivity;
 var globalconfig float Desired43MouseSensitivity;
-var globalconfig bool bCorrectWeaponFOV;
 
 struct WideHUDMapStruct
 {
@@ -309,8 +309,8 @@ defaultproperties
 	bInputClassErrorCheck=true
 	Desired43FOV=90f
 	bCorrectZoomFOV=true
+	bCorrectWeaponFOV=True	
 	bCorrectMouseSensitivity=true
-	bCorrectWeaponFOV=True
 	Desired43MouseSensitivity=-1f
 	WideHUDMap(0)=(HUDClass=class'HUD_Assault',WideHUD="foxWSFix.foxWideHUD_Assault")
 	WideHUDMap(1)=(HUDClass=class'HudCBombingRun',WideHUD="foxWSFix.foxWideHudCBombingRun")
