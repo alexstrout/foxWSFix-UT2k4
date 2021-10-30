@@ -1,4 +1,4 @@
-foxWSFix v2.1.2
+foxWSFix v2.2.0 - [Changelog](#changes) - [Contributors](https://github.com/alexstrout/foxWSFix-UT2k4/graphs/contributors)
 ===============
 Improved widescreen support for Unreal Tournament 2004
 
@@ -66,6 +66,7 @@ foxWSFix stores its settings in System\User.ini as such:
     bInputClassErrorCheck=True      ;Check User.ini InputClass settings for possible errors?
     Desired43FOV=90.000000          ;Desired 4:3 FOV per SetFOV command / menu setting
     bCorrectZoomFOV=True            ;Correct FOV values for weapon zoom?
+    bCorrectWeaponFOV=True          ;Correct FOV values for on-screen weapon viewmodel?
     bCorrectMouseSensitivity=True   ;Correct MouseSensitivity for aspect ratio changes? (due to wider FOV)
     Desired43MouseSensitivity=2.200000 ;Desired 4:3 MouseSensitivity per SetSensitivity command / menu setting
     WideHUDMap=(HudClass=Class'UT2k4Assault.HUD_Assault',WideHUD="foxWSFix.foxWideHUD_Assault")
@@ -99,11 +100,8 @@ Known Issues
 * Some HUDs still have elements that don't quite scale correctly, particularly with ultra-wide (32:9 or greater) ratios.
     (e.g. Assault Rifle grenade counter, on-screen objectives, etc. - unfortunately these are drawn outside the HUD)
 
-Source Code / Compile Steps
----------------------------
-Source code for the project is included in the "Src" folder or online:
-https://www.taraxis.com/foxwsfix-ut2k4
-
+Compile Steps
+-------------
 To compile, move the "foxWSFix" folder inside "Src" out into your root UT2004 install directory.
 
 Then simply add the following to the [Editor.EditorEngine] section in System\ut2004.ini:
@@ -117,21 +115,28 @@ Feedback
 If you have any questions or feedback, feel free to leave a comment on Steam:
 https://steamcommunity.com/app/13230/discussions/0/611702631218438023/
 
+Issues and Pull Requests are also welcome:
+https://github.com/alexstrout/foxWSFix-UT2k4
+
 And of course, thanks for trying the mod!
 ~fox
 
 Changes
 -------
-v2.1.2 (2020-06-26):
+v2.2.0 (2021-10-30):
+* Properly fixed weapon rendering getting offset when transitioning levels or exiting to menus
+* Added "bCorrectWeaponFOV" option to control visual weapon FOV scaling, courtesy of [Nootlord](https://github.com/NOOTLORD)
+
+v2.1.2 (2021-06-26):
 * Fixed weapon rendering getting increasingly offset every level transition
   * (Note: Not applicable to foxWSFix99 for UT99, no fix needed there)
 
-v2.1.1 (2020-06-24):
+v2.1.1 (2021-06-24):
 * Added in-game InputClass error handling to hopefully ease some install issues
 * Updated installation instructions to reflect the above
 * Clarified bCorrectMouseSensitivity (Unreal normally scales sensitivity against a hard-coded 90 FOV for zoom)
 
-v2.1.0 (2020-02-27):
+v2.1.0 (2021-02-27):
 * Resolved AntiTCC issue with GUIController hook (see "v2.0 Upgrade Note" above)
   * (Note: All functionality is still in place, just handled in foxPlayerInput now)
 
