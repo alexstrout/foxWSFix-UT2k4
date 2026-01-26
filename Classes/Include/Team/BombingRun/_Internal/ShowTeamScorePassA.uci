@@ -22,7 +22,8 @@ simulated function TeamBombingRunWideShowTeamScorePassA(Canvas C)
 
 	DrawSpriteTileWidget (C, BombBG);
 	DrawSpriteTileWidget (C, BombWidget.Widgets[BombWidget.BombState]);
-	DrawSpriteTileWidget (C, BombWidgetStatus.Widgets[BombWidget.BombState]);
+	if ( BombWidgetStatus.Widgets[BombWidget.BombState].WidgetTexture != None ) //Only draw if texture exists ~fox
+		DrawSpriteTileWidget (C, BombWidgetStatus.Widgets[BombWidget.BombState]);
 
 	if ( BombFlag == None )
 		ForEach DynamicActors(Class'xBombFlag', BombFlag)
