@@ -12,6 +12,17 @@ Features
 * Aspect-correct mouse sensitivity (scale off wider FOV instead of hard-coded 90)
 * Entirely client-side - no mutators required
 
+Recommendations
+===============
+Before installing this fix, please consider trying the OldUnreal patches first:
+* [Website](https://oldunreal.com/)
+* [GitHub](https://github.com/OldUnreal/UT2004Patches)
+
+These implement native widescreen support and *avoid issues with server-side anti-cheat.*
+
+**As this mod is client-side, you may be kicked _or even banned_ from servers running anti-cheat like [AntiTCC](https://github.com/OldUnreal/AntiTCC-Releases).**
+Please use with caution!
+
 Install / Uninstall
 -------------------
 Extract the release archive to your UT2004 install directory.
@@ -98,7 +109,8 @@ For example, to use HUDFix's UT2k3 widescreen HUDs, replace with the following:
 Known Issues
 ------------
 * Some HUDs still have elements that don't quite scale correctly, particularly with ultra-wide (32:9 or greater) ratios.
-    (e.g. Assault Rifle grenade counter, on-screen objectives, etc. - unfortunately these are drawn outside the HUD)
+  * (e.g. Assault Rifle grenade counter, on-screen objectives, etc. - unfortunately these are drawn outside the HUD)
+* Unreal may refuse to switch to widescreen resolutions above 1080p. See [Recommendations](#recommendations) above.
 
 Compile Steps
 -------------
@@ -123,6 +135,10 @@ And of course, thanks for trying the mod!
 
 Changes
 -------
+v2.2.1 (2026-xx-xx):
+* Fixed BR "DrawTile: Missing Material" error, courtesy of [Illya Moskvin](https://github.com/IllyaMoskvin)
+* Update documentation to mention potential anti-cheat issues (thought I did this years ago! Sorry!)
+
 v2.2.0 (2021-10-30):
 * Properly fixed weapon rendering getting offset when transitioning levels or exiting to menus
 * Added "bCorrectWeaponFOV" option to control visual weapon FOV scaling, courtesy of [Nootlord](https://github.com/NOOTLORD)
