@@ -1,4 +1,4 @@
-foxWSFix v2.2.0 - [Changelog](#changes) - [Contributors](https://github.com/alexstrout/foxWSFix-UT2k4/graphs/contributors)
+foxWSFix v2.2.1 - [Changelog](#changes) - [Contributors](https://github.com/alexstrout/foxWSFix-UT2k4/graphs/contributors)
 ===============
 Improved widescreen support for Unreal Tournament 2004
 
@@ -135,9 +135,9 @@ And of course, thanks for trying the mod!
 
 Changes
 -------
-v2.2.1 (2026-xx-xx):
+v2.2.1 (2026-06-16):
 * Fixed BR "DrawTile: Missing Material" error, courtesy of [Illya Moskvin](https://github.com/IllyaMoskvin)
-* Update documentation to mention potential anti-cheat issues (thought I did this years ago! Sorry!)
+* Updated documentation to mention potential anti-cheat issues (thought I did this years ago! Sorry!)
 
 v2.2.0 (2021-10-30):
 * Properly fixed weapon rendering getting offset when transitioning levels or exiting to menus
